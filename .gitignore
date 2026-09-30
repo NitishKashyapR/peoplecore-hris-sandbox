@@ -5,9 +5,12 @@
 # to a public repository, bundled into an npm/zip package, or otherwise
 # included in a public distribution.
 #
-# Public surface is an allowlist - see EXPORT_MANIFEST.md:
-#   index.html, landing.html, assets/screenshots/*.png
+# Public surface is an allowlist:
+#   index.html, landing.html, assets/, README.md, .gitignore, .npmignore
 # ===========================================================================
+
+# --- Internal manifests & documentation -------------------------------------
+EXPORT_MANIFEST.md
 
 # --- AI project memory banks (sole-owner, local-only, zero-touch) -----------
 PROJECT_MEMORY.md

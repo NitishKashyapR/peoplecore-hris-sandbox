@@ -3,12 +3,14 @@
 #
 # NOTE: npm falls back to .gitignore when no .npmignore is present, so this
 # file exists only to make the exclusion explicit and independent of that
-# fallback. Keep the two lists in sync (EXPORT_MANIFEST.md documents the
-# public allowlist).
+# fallback. Keep the two lists in sync.
 #
 # This project currently has NO package.json and is not published to npm;
 # the file is defensive only.
 # ===========================================================================
+
+# --- Internal manifests & documentation -------------------------------------
+EXPORT_MANIFEST.md
 
 # --- AI project memory banks (local-only, zero-touch) ------------------------
 PROJECT_MEMORY.md
