@@ -1,0 +1,49 @@
+# ===========================================================================
+# npm publish exclusions - mirrors .gitignore exactly.
+#
+# NOTE: npm falls back to .gitignore when no .npmignore is present, so this
+# file exists only to make the exclusion explicit and independent of that
+# fallback. Keep the two lists in sync (EXPORT_MANIFEST.md documents the
+# public allowlist).
+#
+# This project currently has NO package.json and is not published to npm;
+# the file is defensive only.
+# ===========================================================================
+
+# --- AI project memory banks (local-only, zero-touch) ------------------------
+PROJECT_MEMORY.md
+PROJECT_LOGS.md
+
+# --- Agent harness config, hooks and internal notes --------------------------
+AGENTS.md
+.agents/
+.opencode/
+
+# --- Harness/tooling config --------------------------------------------------
+opencode.json
+
+# --- Development scratch -----------------------------------------------------
+scratch/
+
+# --- Local server / environment files ----------------------------------------
+.env
+.env.*
+*.env
+*.local
+.vscode/
+.idea/
+
+# --- Dependency, build and coverage output -----------------------------------
+node_modules/
+dist/
+build/
+coverage/
+.cache/
+
+# --- Logs, backups and OS/editor junk ----------------------------------------
+*.log
+*.bak
+*.tmp
+.DS_Store
+Thumbs.db
+desktop.ini

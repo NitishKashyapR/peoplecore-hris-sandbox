@@ -1,0 +1,1115 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>PeopleCore — Free Open-Source Enterprise HRIS Sandbox &amp; Professional Academy</title>
+<meta name="description" content="PeopleCore is a zero-server, 100% client-side enterprise HRIS simulator and certified training academy: multi-jurisdiction payroll, ATS, org design, immutable audit trails and a 10-module curriculum with a 100-question examination suite. Download the single-file app and run it in any browser."/>
+<meta name="color-scheme" content="light dark"/>
+
+<!-- ================================================================================
+     PEOPLECORE LANDING — DESIGN SYSTEM (declared before build)
+     Palette   : Deep Navy #0f172a · Crisp Slate #f8fafc · Emerald #047857 (emerald-700)
+                 Indigo #4f46e5 reserved for the brand mark only (mirrors the app).
+     Type      : Inter (400/500/600/700/800) for UI + display; JetBrains Mono for eyebrows,
+                 numerals and technical values — same pairing as the product.
+     Scale     : h1 clamp(2.4rem → 4rem) · h2 clamp(1.8rem → 2.6rem) · h3 1.25rem
+                 body 1rem/1.7 · small 0.875rem · eyebrow 0.72rem mono uppercase 0.18em.
+     Rhythm    : 8px base · container max-w-7xl · sections py-20 sm:py-28 · card p-6.
+     Pattern   : every section = mono emerald eyebrow → bold h2 → slate lede → content.
+     Themes    : light (#f8fafc / white cards) and dark (#0b1322 / #152238 cards),
+                 toggled by .dark on <html>, persisted to localStorage['landing.theme'],
+                 applied pre-paint by the head script below (no flash of wrong theme).
+     Assets    : assets/screenshots/*.png — captured at 2× device scale (2880×1800).
+     ================================F============================================= -->
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect width='24' height='24' rx='6' fill='%234f46e5'/%3E%3Cg fill='none' stroke='%23fff' stroke-width='2' stroke-linejoin='round'%3E%3Cpath d='m12 5 7.5 4-7.5 4-7.5-4 7.5-4z'/%3E%3Cpath d='m4.5 13.5 7.5 4 7.5-4'/%3E%3C/g%3E%3C/svg%3E"/>
+
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet"/>
+
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    darkMode: 'class',
+    theme: {
+      extend: {
+        colors: {
+          navy: { DEFAULT: '#0f172a', 800: '#152238', 900: '#0b1322' },
+          emerald: { 700: '#047857' },
+          brand: { DEFAULT: '#4f46e5' }
+        },
+        fontFamily: {
+          sans: ['Inter', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+          mono: ['"JetBrains Mono"', 'ui-monospace', 'SFMono-Regular', 'monospace']
+        }
+      }
+    }
+  };
+</script>
+<script>
+  /* pre-paint theme — mirrors the product's own no-FOUC head script */
+  (function () {
+    try {
+      var t = localStorage.getItem('landing.theme');
+      if (t === 'dark' || (!t && false)) document.documentElement.classList.add('dark');
+    } catch (e) {}
+  })();
+</script>
+<style>
+  html { -webkit-text-size-adjust: 100%; }
+  body { text-wrap: pretty; }
+  section[id] { scroll-margin-top: 5rem; }
+  .eyebrow { font-family: "JetBrains Mono", monospace; font-size: .72rem; letter-spacing: .18em; text-transform: uppercase; }
+  .hero-grid {
+    background-image: linear-gradient(to right, rgba(15,23,42,.055) 1px, transparent 1px),
+                      linear-gradient(to bottom, rgba(15,23,42,.055) 1px, transparent 1px);
+    background-size: 44px 44px;
+    -webkit-mask-image: radial-gradient(ellipse 90% 70% at 50% 0%, #000 35%, transparent 78%);
+            mask-image: radial-gradient(ellipse 90% 70% at 50% 0%, #000 35%, transparent 78%);
+  }
+  .dark .hero-grid {
+    background-image: linear-gradient(to right, rgba(255,255,255,.06) 1px, transparent 1px),
+                      linear-gradient(to bottom, rgba(255,255,255,.06) 1px, transparent 1px);
+  }
+  .reveal { opacity: 0; transform: translateY(18px); transition: opacity .6s cubic-bezier(.22,1,.36,1), transform .6s cubic-bezier(.22,1,.36,1); }
+  .reveal.is-visible { opacity: 1; transform: none; }
+  @media (prefers-reduced-motion: reduce) {
+    .reveal { opacity: 1 !important; transform: none !important; transition: none !important; }
+    html { scroll-behavior: auto; }
+  }
+  .shot { background: #fff; }
+  .dark .shot { background: #0f172a; }
+  ::selection { background: #047857; color: #fff; }
+</style>
+</head>
+
+<body id="top" class="bg-[#f8fafc] text-slate-900 dark:bg-navy-900 dark:text-slate-200 font-sans antialiased">
+
+<!-- ============================ TOP BAR / NAVIGATION ============================ -->
+<header class="sticky top-0 z-50 border-b border-slate-200/80 dark:border-white/10 bg-white/85 dark:bg-navy-900/85 backdrop-blur-md transition-shadow" id="siteHeader">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6">
+    <div class="h-16 flex items-center gap-3 sm:gap-5">
+      <!-- Logo -->
+      <a href="#top" class="flex items-center gap-2.5 shrink-0 group">
+        <span class="w-9 h-9 rounded-lg bg-brand grid place-items-center shadow-sm transition group-hover:scale-105">
+          <svg viewBox="0 0 24 24" class="w-5 h-5 text-white" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true">
+            <path d="m12 2.5 9.5 5-9.5 5-9.5-5 9.5-5z"/><path d="m2.5 12.5 9.5 5 9.5-5"/><path d="m2.5 17 9.5 5 9.5-5"/>
+          </svg>
+        </span>
+        <span class="leading-tight hidden sm:block">
+          <span class="block text-sm font-bold tracking-[0.14em] text-slate-900 dark:text-white">PEOPLECORE</span>
+          <span class="block eyebrow text-slate-500 dark:text-slate-400" style="font-size:.6rem">HRIS Sandbox &amp; Academy</span>
+        </span>
+      </a>
+
+      <!-- Desktop links -->
+      <nav class="hidden lg:flex items-center gap-1 ml-3" aria-label="Primary">
+        <a href="#features" class="px-3 py-2 rounded-lg text-sm font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-100 dark:text-slate-300 dark:hover:text-white dark:hover:bg-white/10 transition">Features</a>
+        <a href="#architecture" class="px-3 py-2 rounded-lg text-sm font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-100 dark:text-slate-300 dark:hover:text-white dark:hover:bg-white/10 transition">Architecture</a>
+        <a href="#curriculum" class="px-3 py-2 rounded-lg text-sm font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-100 dark:text-slate-300 dark:hover:text-white dark:hover:bg-white/10 transition">Curriculum</a>
+        <a href="#credentials" class="px-3 py-2 rounded-lg text-sm font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-100 dark:text-slate-300 dark:hover:text-white dark:hover:bg-white/10 transition">Credentials</a>
+        <a href="https://github.com/NitishKashyapR" target="_blank" rel="noopener noreferrer" class="px-3 py-2 rounded-lg text-sm font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-100 dark:text-slate-300 dark:hover:text-white dark:hover:bg-white/10 transition inline-flex items-center gap-1.5">
+          <svg viewBox="0 0 24 24" class="w-4 h-4" fill="currentColor" aria-hidden="true"><path d="M12 .5A11.5 11.5 0 0 0 .5 12a11.5 11.5 0 0 0 7.86 10.92c.58.1.79-.25.79-.56v-2c-3.2.7-3.88-1.37-3.88-1.37-.53-1.34-1.29-1.7-1.29-1.7-1.06-.72.08-.7.08-.7 1.17.08 1.78 1.2 1.78 1.2 1.04 1.79 2.74 1.27 3.4.97.11-.76.41-1.27.74-1.56-2.55-.29-5.24-1.28-5.24-5.68 0-1.26.45-2.29 1.19-3.1-.12-.29-.52-1.46.11-3.05 0 0 .97-.31 3.17 1.18a11 11 0 0 1 5.78 0c2.2-1.5 3.17-1.18 3.17-1.18.63 1.59.23 2.76.11 3.05.74.81 1.19 1.84 1.19 3.1 0 4.42-2.69 5.39-5.26 5.67.42.36.8 1.07.8 2.17v3.22c0 .31.21.67.8.56A11.5 11.5 0 0 0 23.5 12 11.5 11.5 0 0 0 12 .5z"/></svg>
+          Open Source
+        </a>
+      </nav>
+
+      <div class="ml-auto flex items-center gap-2">
+        <!-- Theme toggle -->
+        <button id="themeToggle" type="button" aria-label="Toggle dark mode" title="Toggle light / dark"
+          class="w-9 h-9 grid place-items-center rounded-lg border border-slate-200 dark:border-white/15 bg-white dark:bg-white/5 text-slate-600 dark:text-slate-300 hover:border-slate-300 dark:hover:border-white/30 hover:text-slate-900 dark:hover:text-white transition">
+          <svg class="w-4.5 h-4.5 w-[18px] h-[18px] block dark:hidden" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
+          <svg class="w-[18px] h-[18px] hidden dark:block" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+        </button>
+
+        <!-- Primary action -->
+        <button type="button" onclick="downloadPeopleCoreApp()"
+          class="hidden sm:inline-flex items-center gap-2 h-9 px-4 rounded-lg bg-emerald-700 hover:bg-emerald-800 active:bg-emerald-900 text-white text-[13px] font-semibold shadow-sm transition focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-navy-900">
+          <svg viewBox="0 0 24 24" class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="m7 10 5 5 5-5"/><path d="M12 15V3"/></svg>
+          Download Simulator (.html)
+        </button>
+
+        <!-- Mobile menu -->
+        <button id="menuToggle" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="mobileMenu"
+          class="lg:hidden w-9 h-9 grid place-items-center rounded-lg border border-slate-200 dark:border-white/15 bg-white dark:bg-white/5 text-slate-600 dark:text-slate-300">
+          <svg viewBox="0 0 24 24" class="w-[18px] h-[18px]" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Mobile menu panel -->
+  <div id="mobileMenu" class="hidden lg:hidden border-t border-slate-200 dark:border-white/10 bg-white dark:bg-navy-900">
+    <nav class="max-w-7xl mx-auto px-4 sm:px-6 py-3 flex flex-col" aria-label="Mobile">
+      <a href="#features" class="menu-link px-3 py-2.5 rounded-lg text-sm font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-white/10">Features</a>
+      <a href="#architecture" class="menu-link px-3 py-2.5 rounded-lg text-sm font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-white/10">Architecture</a>
+      <a href="#curriculum" class="menu-link px-3 py-2.5 rounded-lg text-sm font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-white/10">Curriculum</a>
+      <a href="#credentials" class="menu-link px-3 py-2.5 rounded-lg text-sm font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-white/10">Credentials</a>
+      <a href="https://github.com/NitishKashyapR" target="_blank" rel="noopener noreferrer" class="menu-link px-3 py-2.5 rounded-lg text-sm font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-white/10">GitHub / Open Source</a>
+      <button type="button" onclick="downloadPeopleCoreApp()" class="mt-2 h-11 rounded-lg bg-emerald-700 hover:bg-emerald-800 text-white text-sm font-semibold inline-flex items-center justify-center gap-2">
+        <svg viewBox="0 0 24 24" class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="m7 10 5 5 5-5"/><path d="M12 15V3"/></svg>
+        Download Standalone Application (.html)
+      </button>
+    </nav>
+  </div>
+</header>
+
+<main>
+
+<!-- ================================= A · HERO ================================== -->
+<section class="relative overflow-hidden">
+  <div class="absolute inset-0 hero-grid pointer-events-none" aria-hidden="true"></div>
+  <div class="absolute inset-x-0 top-0 h-72 bg-gradient-to-b from-emerald-500/[0.07] to-transparent pointer-events-none dark:from-emerald-400/[0.06]" aria-hidden="true"></div>
+
+  <div class="relative max-w-7xl mx-auto px-4 sm:px-6 pt-14 sm:pt-20 pb-16 sm:pb-24">
+    <div class="max-w-4xl">
+      <!-- Hero badge -->
+      <p class="inline-flex items-center gap-2 rounded-full border border-emerald-700/25 bg-emerald-50 dark:bg-emerald-500/10 dark:border-emerald-400/25 px-3.5 py-1.5 eyebrow text-emerald-800 dark:text-emerald-300 reveal">
+        <span class="w-1.5 h-1.5 rounded-full bg-emerald-600 dark:bg-emerald-400"></span>
+        Zero-Server · 100% Client-Side · Enterprise HRIS &amp; Operations Sandbox
+      </p>
+
+      <h1 class="mt-6 text-[clamp(2.35rem,5.6vw,4rem)] font-extrabold tracking-[-0.02em] leading-[1.05] text-slate-900 dark:text-white reveal" style="transition-delay:.05s">
+        Master enterprise workforce operations through <span class="text-emerald-700 dark:text-emerald-400">real-time simulation</span>.
+      </h1>
+
+      <p class="mt-5 text-lg sm:text-xl leading-relaxed text-slate-600 dark:text-slate-300 max-w-3xl reveal" style="transition-delay:.1s">
+        PeopleCore is a zero-latency, full-fidelity HRIS sandbox and certified training academy — engineered for HR
+        practitioners, people-ops engineers and HR tech consultants who need to practise on the real machinery:
+        statutory payroll, ATS pipelines, org design, RBAC and immutable audit trails, running entirely inside your browser.
+      </p>
+
+      <div class="mt-8 flex flex-col sm:flex-row flex-wrap items-stretch sm:items-center gap-3 reveal" style="transition-delay:.15s">
+        <button type="button" onclick="downloadPeopleCoreApp()"
+          class="group inline-flex items-center justify-center gap-2.5 h-12 px-6 rounded-xl bg-emerald-700 hover:bg-emerald-800 active:bg-emerald-900 text-white text-[15px] font-semibold shadow-lg shadow-emerald-700/20 transition focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-navy-900">
+          <svg viewBox="0 0 24 24" class="w-5 h-5 transition group-hover:translate-y-0.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="m7 10 5 5 5-5"/><path d="M12 15V3"/></svg>
+          Download Standalone Application (.html)
+        </button>
+        <a href="#features"
+          class="inline-flex items-center justify-center gap-2.5 h-12 px-6 rounded-xl border border-slate-300 dark:border-white/20 bg-white dark:bg-white/5 text-slate-800 dark:text-slate-100 text-[15px] font-semibold hover:border-slate-400 dark:hover:border-white/40 hover:bg-slate-50 dark:hover:bg-white/10 transition">
+          Explore Live Interactive Sandbox
+          <svg viewBox="0 0 24 24" class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+        </a>
+      </div>
+
+      <p class="mt-4 eyebrow text-slate-500 dark:text-slate-400 reveal" style="transition-delay:.2s">
+        No installation · No account · No Docker · Nothing leaves your machine
+      </p>
+    </div>
+
+    <!-- Hero visual: 50/50 light · dark composite -->
+    <figure class="mt-12 sm:mt-14 reveal" style="transition-delay:.25s">
+      <div class="relative rounded-2xl overflow-hidden border border-slate-200 dark:border-white/10 shadow-2xl shadow-slate-900/10 dark:shadow-black/50 bg-white dark:bg-navy-800">
+        <img src="assets/screenshots/hero-theme-split-showcase.png"
+             alt="PeopleCore Command Center shown in light mode on the left half and dark mode on the right half, split by a vertical divider"
+             width="2880" height="1800" fetchpriority="high"
+             class="block w-full h-auto"/>
+        <span class="absolute left-3 top-3 sm:left-4 sm:top-4 rounded-md bg-white/95 dark:bg-navy-900/95 border border-slate-200 dark:border-white/15 px-2.5 py-1 eyebrow text-slate-700 dark:text-slate-200 shadow-sm">Light mode</span>
+        <span class="absolute right-3 top-3 sm:right-4 sm:top-4 rounded-md bg-navy/95 border border-white/15 px-2.5 py-1 eyebrow text-slate-100 shadow-sm">Dark mode</span>
+      </div>
+      <figcaption class="mt-3 text-sm text-slate-500 dark:text-slate-400 flex flex-wrap items-center gap-x-2 gap-y-2">
+        <span class="font-semibold text-slate-700 dark:text-slate-300">One session, two themes.</span>
+        <span>The exact same Command Center view — same data, same layout — toggled with a single switch and persisted per browser.</span>
+      </figcaption>
+    </figure>
+
+    <!-- Grounded stat strip -->
+    <dl class="mt-12 grid grid-cols-2 md:grid-cols-3 xl:grid-cols-6 gap-3 reveal">
+      <div class="rounded-xl border border-slate-200 dark:border-white/10 bg-white dark:bg-navy-800 p-4">
+        <dt class="eyebrow text-slate-500 dark:text-slate-400">Sandbox modules</dt>
+        <dd class="mt-2 text-2xl font-bold mono text-slate-900 dark:text-white">10</dd>
+      </div>
+      <div class="rounded-xl border border-slate-200 dark:border-white/10 bg-white dark:bg-navy-800 p-4">
+        <dt class="eyebrow text-slate-500 dark:text-slate-400">Academy modules</dt>
+        <dd class="mt-2 text-2xl font-bold mono text-slate-900 dark:text-white">10</dd>
+      </div>
+      <div class="rounded-xl border border-slate-200 dark:border-white/10 bg-white dark:bg-navy-800 p-4">
+        <dt class="eyebrow text-slate-500 dark:text-slate-400">Statutory regimes</dt>
+        <dd class="mt-2 text-2xl font-bold mono text-slate-900 dark:text-white">4</dd>
+      </div>
+      <div class="rounded-xl border border-slate-200 dark:border-white/10 bg-white dark:bg-navy-800 p-4">
+        <dt class="eyebrow text-slate-500 dark:text-slate-400">Exam questions</dt>
+        <dd class="mt-2 text-2xl font-bold mono text-slate-900 dark:text-white">100</dd>
+      </div>
+      <div class="rounded-xl border border-slate-200 dark:border-white/10 bg-white dark:bg-navy-800 p-4">
+        <dt class="eyebrow text-slate-500 dark:text-slate-400">RBAC roles</dt>
+        <dd class="mt-2 text-2xl font-bold mono text-slate-900 dark:text-white">3</dd>
+      </div>
+      <div class="rounded-xl border border-slate-200 dark:border-white/10 bg-white dark:bg-navy-800 p-4">
+        <dt class="eyebrow text-slate-500 dark:text-slate-400">Servers required</dt>
+        <dd class="mt-2 text-2xl font-bold mono text-emerald-700 dark:text-emerald-400">0</dd>
+      </div>
+    </dl>
+  </div>
+</section>
+
+<!-- =============================== B · WHY PEOPLECORE ========================== -->
+<section id="why" class="py-20 sm:py-28 border-t border-slate-200 dark:border-white/10 bg-white dark:bg-navy-900">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6">
+    <div class="max-w-3xl reveal">
+      <p class="eyebrow text-emerald-700 dark:text-emerald-400">Why PeopleCore?</p>
+      <h2 class="mt-3 text-[clamp(1.8rem,3.4vw,2.6rem)] font-extrabold tracking-[-0.02em] text-slate-900 dark:text-white">
+        The gap between HR training and HR reality.
+      </h2>
+      <p class="mt-4 text-lg text-slate-600 dark:text-slate-300">
+        Most professionals learn enterprise HRIS on slides, then meet statutory math on their first live payroll run.
+        PeopleCore closes all three gaps at once.
+      </p>
+    </div>
+
+    <div class="mt-12 grid md:grid-cols-3 gap-5">
+      <!-- 1 -->
+      <article class="reveal rounded-2xl border border-slate-200 dark:border-white/10 bg-[#f8fafc] dark:bg-navy-800 p-6 flex flex-col">
+        <span class="w-11 h-11 rounded-xl bg-slate-900 dark:bg-white/10 text-white grid place-items-center">
+          <svg viewBox="0 0 24 24" class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 9h18M8 14h8"/></svg>
+        </span>
+        <h3 class="mt-5 text-lg font-bold text-slate-900 dark:text-white">The sandbox problem</h3>
+        <p class="mt-2.5 text-[15px] leading-relaxed text-slate-600 dark:text-slate-300">
+          Workday, SuccessFactors and Gusto only open up behind expensive enterprise licences or paid test tenants —
+          exactly the access a fresh graduate or a consultant evaluating a stack never gets.
+        </p>
+        <p class="mt-4 pt-4 border-t border-slate-200 dark:border-white/10 text-[15px] leading-relaxed text-slate-700 dark:text-slate-200">
+          <span class="font-semibold text-emerald-800 dark:text-emerald-400">PeopleCore ships the tenant.</span>
+          A full multi-module HRIS with seeded employees, open requisitions, pending leave and a live payroll cycle —
+          free, forever, with zero provisioning.
+        </p>
+      </article>
+
+      <!-- 2 -->
+      <article class="reveal rounded-2xl border border-slate-200 dark:border-white/10 bg-[#f8fafc] dark:bg-navy-800 p-6 flex flex-col" style="transition-delay:.08s">
+        <span class="w-11 h-11 rounded-xl bg-slate-900 dark:bg-white/10 text-white grid place-items-center">
+          <svg viewBox="0 0 24 24" class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v18"/><path d="M17 6.5H9.75a3.25 3.25 0 0 0 0 6.5h4.5a3.25 3.25 0 0 1 0 6.5H6.5"/></svg>
+        </span>
+        <h3 class="mt-5 text-lg font-bold text-slate-900 dark:text-white">The compliance reality</h3>
+        <p class="mt-2.5 text-[15px] leading-relaxed text-slate-600 dark:text-slate-300">
+          Modern HR is applied mathematics: FLSA blended overtime, German social-contribution ceilings, Indian gratuity
+          and EPF, UK PAYE tax codes and NI thresholds. Manual data entry never teaches the formula behind the figure.
+        </p>
+        <p class="mt-4 pt-4 border-t border-slate-200 dark:border-white/10 text-[15px] leading-relaxed text-slate-700 dark:text-slate-200">
+          <span class="font-semibold text-emerald-800 dark:text-emerald-400">The engine computes it live.</span>
+          Switch jurisdiction and gross-to-net, severance, leave standards and payslip disclosures all re-contextualise —
+          with the governing code printed beside them.
+        </p>
+      </article>
+
+      <!-- 3 -->
+      <article class="reveal rounded-2xl border border-slate-200 dark:border-white/10 bg-[#f8fafc] dark:bg-navy-800 p-6 flex flex-col" style="transition-delay:.16s">
+        <span class="w-11 h-11 rounded-xl bg-slate-900 dark:bg-white/10 text-white grid place-items-center">
+          <svg viewBox="0 0 24 24" class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 11.5 2 2 4-4.5"/></svg>
+        </span>
+        <h3 class="mt-5 text-lg font-bold text-slate-900 dark:text-white">The local-first guarantee</h3>
+        <p class="mt-2.5 text-[15px] leading-relaxed text-slate-600 dark:text-slate-300">
+          Cloud HR tooling means accounts, trackers, tenant costs, uptime dependencies and employee data sitting on
+          somebody else's database — a hard sell for a classroom, a workshop or a personal portfolio.
+        </p>
+        <p class="mt-4 pt-4 border-t border-slate-200 dark:border-white/10 text-[15px] leading-relaxed text-slate-700 dark:text-slate-200">
+          <span class="font-semibold text-emerald-800 dark:text-emerald-400">Zero trackers, zero servers, zero database cost.</span>
+          State persists to <span class="mono text-[13px]">localStorage</span> for offline use; export a JSON snapshot and
+          carry the whole company record to another machine.
+        </p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ============================ C · CORE CAPABILITIES ========================== -->
+<section id="features" class="py-20 sm:py-28 bg-[#f8fafc] dark:bg-navy-900/60 border-y border-slate-200 dark:border-white/10">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6">
+    <div class="max-w-3xl reveal">
+      <p class="eyebrow text-emerald-700 dark:text-emerald-400">Core capabilities</p>
+      <h2 class="mt-3 text-[clamp(1.8rem,3.4vw,2.6rem)] font-extrabold tracking-[-0.02em] text-slate-900 dark:text-white">
+        Everything an enterprise HRIS does — running locally, at full fidelity.
+      </h2>
+      <p class="mt-4 text-lg text-slate-600 dark:text-slate-300">
+        Real screens from the running application, captured at 2× resolution. Pick a system and see it work.
+      </p>
+    </div>
+
+    <!-- Tabs -->
+    <div class="mt-10 reveal">
+      <div class="flex gap-2 overflow-x-auto pb-1 scroll-slim" role="tablist" aria-label="Core capabilities">
+        <button role="tab" id="tab-1" aria-controls="panel-1" aria-selected="true" tabindex="0" class="cap-tab shrink-0 h-10 px-4 rounded-lg text-[13px] font-semibold border transition bg-slate-900 text-white border-slate-900 dark:bg-white dark:text-navy dark:border-white">Executive Command Center</button>
+        <button role="tab" id="tab-2" aria-controls="panel-2" aria-selected="false" tabindex="-1" class="cap-tab shrink-0 h-10 px-4 rounded-lg text-[13px] font-semibold border transition bg-white dark:bg-white/5 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-white/15 hover:border-slate-300 dark:hover:border-white/30">Workforce Provisioning</button>
+        <button role="tab" id="tab-3" aria-controls="panel-3" aria-selected="false" tabindex="-1" class="cap-tab shrink-0 h-10 px-4 rounded-lg text-[13px] font-semibold border transition bg-white dark:bg-white/5 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-white/15 hover:border-slate-300 dark:hover:border-white/30">Statutory Payroll Engine</button>
+        <button role="tab" id="tab-4" aria-controls="panel-4" aria-selected="false" tabindex="-1" class="cap-tab shrink-0 h-10 px-4 rounded-lg text-[13px] font-semibold border transition bg-white dark:bg-white/5 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-white/15 hover:border-slate-300 dark:hover:border-white/30">Immutable Audit Trail</button>
+      </div>
+
+      <!-- Panel 1 -->
+      <div role="tabpanel" id="panel-1" aria-labelledby="tab-1" class="cap-panel mt-6">
+        <div class="grid lg:grid-cols-[minmax(0,1.55fr)_minmax(0,1fr)] gap-6 items-start">
+          <figure class="rounded-2xl overflow-hidden border border-slate-200 dark:border-white/10 bg-white dark:bg-navy-800 shadow-xl shadow-slate-900/5 dark:shadow-black/40">
+            <img src="assets/screenshots/01-command-center-light.png" loading="lazy" width="2880" height="1800"
+                 alt="PeopleCore Command Center: executive hero strip, four quick actions, telemetry cards and the universal action inbox"
+                 class="block w-full h-auto cursor-zoom-in" onclick="openLightbox(this)"/>
+          </figure>
+          <div>
+            <h3 class="text-xl font-bold text-slate-900 dark:text-white">Module 00 · Executive Command Center</h3>
+            <p class="mt-2 text-[15px] leading-relaxed text-slate-600 dark:text-slate-300">
+              A single-pane operational triage surface: approvals, compliance clocks, coverage gaps and cycle execution —
+              no tab-hopping, no stale spreadsheet.
+            </p>
+            <ul class="mt-5 space-y-3 text-[15px] text-slate-700 dark:text-slate-200">
+              <li class="flex gap-3"><span class="mt-2 w-1.5 h-1.5 rounded-full bg-emerald-600 shrink-0"></span><span><strong>Universal action inbox</strong> with SLA badges, countdowns and one-click triage across leave, documents, shifts and reviews.</span></li>
+              <li class="flex gap-3"><span class="mt-2 w-1.5 h-1.5 rounded-full bg-emerald-600 shrink-0"></span><span><strong>Four telemetry cards</strong> — active headcount (W-2 / 1099 split), open requisitions, committed cycle payroll and a live compliance index.</span></li>
+              <li class="flex gap-3"><span class="mt-2 w-1.5 h-1.5 rounded-full bg-emerald-600 shrink-0"></span><span><strong>Workforce velocity &amp; mobility pulse</strong> — recent arrivals against anniversaries, work-authorisation expiries and review windows.</span></li>
+              <li class="flex gap-3"><span class="mt-2 w-1.5 h-1.5 rounded-full bg-emerald-600 shrink-0"></span><span><strong>Quick actions</strong> jump straight into onboarding, leave requests, payroll execution and the audit log.</span></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Panel 2 -->
+      <div role="tabpanel" id="panel-2" aria-labelledby="tab-2" class="cap-panel mt-6 hidden">
+        <div class="grid lg:grid-cols-[minmax(0,1.55fr)_minmax(0,1fr)] gap-6 items-start">
+          <div class="grid sm:grid-cols-2 gap-4">
+            <figure class="rounded-2xl overflow-hidden border border-slate-200 dark:border-white/10 bg-white dark:bg-navy-800 shadow-xl shadow-slate-900/5 dark:shadow-black/40">
+              <img src="assets/screenshots/03-onboarding-modal-light.png" loading="lazy" width="2880" height="1800"
+                   alt="Single-employee onboarding wizard modal with jurisdiction-aware statutory defaults"
+                   class="block w-full h-auto cursor-zoom-in" onclick="openLightbox(this)"/>
+              <figcaption class="px-4 py-3 text-[13px] text-slate-500 dark:text-slate-400 border-t border-slate-100 dark:border-white/10">Modal onboarding wizard</figcaption>
+            </figure>
+            <figure class="rounded-2xl overflow-hidden border border-slate-200 dark:border-white/10 bg-white dark:bg-navy-800 shadow-xl shadow-slate-900/5 dark:shadow-black/40">
+              <img src="assets/screenshots/04-bulk-csv-ingest-light.png" loading="lazy" width="2880" height="1800"
+                   alt="Data Exchange Hub showing bulk CSV ingest with preview, row-level validation and JSON snapshot restore"
+                   class="block w-full h-auto cursor-zoom-in" onclick="openLightbox(this)"/>
+              <figcaption class="px-4 py-3 text-[13px] text-slate-500 dark:text-slate-400 border-t border-slate-100 dark:border-white/10">Bulk CSV ingest &amp; JSON snapshots</figcaption>
+            </figure>
+          </div>
+          <div>
+            <h3 class="text-xl font-bold text-slate-900 dark:text-white">Individual &amp; bulk workforce provisioning</h3>
+            <p class="mt-2 text-[15px] leading-relaxed text-slate-600 dark:text-slate-300">
+              Hire one worker with a guided wizard, or ten thousand rows through validated ingestion — both routes
+              produce identical, auditable master data.
+            </p>
+            <ul class="mt-5 space-y-3 text-[15px] text-slate-700 dark:text-slate-200">
+              <li class="flex gap-3"><span class="mt-2 w-1.5 h-1.5 rounded-full bg-emerald-600 shrink-0"></span><span><strong>Jurisdiction-aware defaults</strong> — the wizard seeds statutory leave entitlement, classification and pay class from the active regime.</span></li>
+              <li class="flex gap-3"><span class="mt-2 w-1.5 h-1.5 rounded-full bg-emerald-600 shrink-0"></span><span><strong>Row-level CSV validation</strong> with a preview/commit gate: valid rows land, invalid rows report the exact failing field, and nothing is silently dropped.</span></li>
+              <li class="flex gap-3"><span class="mt-2 w-1.5 h-1.5 rounded-full bg-emerald-600 shrink-0"></span><span><strong>Schema-checked JSON snapshots</strong> for restore, plus downloadable templates and register exports.</span></li>
+              <li class="flex gap-3"><span class="mt-2 w-1.5 h-1.5 rounded-full bg-emerald-600 shrink-0"></span><span><strong>Reconciled master data</strong> — an ATS conversion fills a real position seat, while manual onboarding seeds jurisdiction-correct leave balances, worksite defaults and a classification-correct pay class.</span></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Panel 3 -->
+      <div role="tabpanel" id="panel-3" aria-labelledby="tab-3" class="cap-panel mt-6 hidden">
+        <div class="grid lg:grid-cols-[minmax(0,1.55fr)_minmax(0,1fr)] gap-6 items-start">
+          <div>
+            <div class="rounded-2xl overflow-hidden border border-slate-200 dark:border-white/10 bg-white dark:bg-navy-800 shadow-xl shadow-slate-900/5 dark:shadow-black/40">
+              <div class="flex items-center justify-between gap-3 px-4 py-3 border-b border-slate-100 dark:border-white/10">
+                <span class="eyebrow text-slate-500 dark:text-slate-400">Live jurisdiction switch</span>
+                <div class="flex gap-1 p-1 rounded-lg bg-slate-100 dark:bg-white/10" role="tablist" aria-label="Jurisdiction preview">
+                  <button type="button" data-jur="us" class="jur-btn h-7 px-3 rounded-md text-[12px] font-bold mono bg-white dark:bg-navy text-slate-900 dark:text-white shadow-sm">US (USD $)</button>
+                  <button type="button" data-jur="de" class="jur-btn h-7 px-3 rounded-md text-[12px] font-bold mono text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-white">EU/DE (EUR €)</button>
+                </div>
+              </div>
+              <img id="jurShot" src="assets/screenshots/06-payroll-engine-us-light.png" loading="lazy" width="2880" height="1800"
+                   alt="Payroll engine in the US jurisdiction showing gross-to-net totals, the tax laboratory and the payroll register"
+                   class="block w-full h-auto cursor-zoom-in" onclick="openLightbox(this)"/>
+            </div>
+            <p class="mt-3 text-[13px] text-slate-500 dark:text-slate-400">Same register, same workers — switching the regime re-computes withholding, currency, labels and disclosure text.</p>
+          </div>
+          <div>
+            <h3 class="text-xl font-bold text-slate-900 dark:text-white">Multi-jurisdiction statutory engine</h3>
+            <p class="mt-2 text-[15px] leading-relaxed text-slate-600 dark:text-slate-300">
+              Four global economic regimes, calculated by one engine: <span class="mono text-[13px] font-semibold">US · UK · DE · IN</span>.
+            </p>
+            <ul class="mt-5 space-y-3 text-[15px] text-slate-700 dark:text-slate-200">
+              <li class="flex gap-3"><span class="mt-2 w-1.5 h-1.5 rounded-full bg-emerald-600 shrink-0"></span><span><strong>US</strong> — federal/state withholding, FICA 7.65%, 401(k) deferral, FUTA/SUTA employer burden.</span></li>
+              <li class="flex gap-3"><span class="mt-2 w-1.5 h-1.5 rounded-full bg-emerald-600 shrink-0"></span><span><strong>UK</strong> — PAYE, employee/employer NI, auto-enrolment workplace pension, statutory payslip rules.</span></li>
+              <li class="flex gap-3"><span class="mt-2 w-1.5 h-1.5 rounded-full bg-emerald-600 shrink-0"></span><span><strong>Germany</strong> — wage tax incl. solidarity surcharge, pension 9.3%, health 7.3%, unemployment 1.3%.</span></li>
+              <li class="flex gap-3"><span class="mt-2 w-1.5 h-1.5 rounded-full bg-emerald-600 shrink-0"></span><span><strong>India</strong> — TDS, EPF, ESIC, professional tax and gratuity accrual on every payslip.</span></li>
+              <li class="flex gap-3"><span class="mt-2 w-1.5 h-1.5 rounded-full bg-emerald-600 shrink-0"></span><span><strong>Exit settlements too</strong> — at-will PTO encashment, UK/EU statutory notice caps and Indian gratuity <span class="mono text-[13px]">(15 × Basic × Years) / 26</span>.</span></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Panel 4 -->
+      <div role="tabpanel" id="panel-4" aria-labelledby="tab-4" class="cap-panel mt-6 hidden">
+        <div class="grid lg:grid-cols-[minmax(0,1.55fr)_minmax(0,1fr)] gap-6 items-start">
+          <figure class="rounded-2xl overflow-hidden border border-slate-200 dark:border-white/10 bg-white dark:bg-navy-800 shadow-xl shadow-slate-900/5 dark:shadow-black/40">
+            <img src="assets/screenshots/08-audit-trail-light.png" loading="lazy" width="2880" height="1800"
+                 alt="Append-only audit ledger listing timestamped events with actor, role, event type and payload"
+                 class="block w-full h-auto cursor-zoom-in" onclick="openLightbox(this)"/>
+          </figure>
+          <div>
+            <h3 class="text-xl font-bold text-slate-900 dark:text-white">Append-only forensic ledger</h3>
+            <p class="mt-2 text-[15px] leading-relaxed text-slate-600 dark:text-slate-300">
+              There is no delete operation. Corrections are recorded as new compensating events, so the record can be
+              defended in a wage claim, a discrimination charge or a SOX control test.
+            </p>
+            <ul class="mt-5 space-y-3 text-[15px] text-slate-700 dark:text-slate-200">
+              <li class="flex gap-3"><span class="mt-2 w-1.5 h-1.5 rounded-full bg-emerald-600 shrink-0"></span><span><strong>Every mutation logs actor, role, timestamp, event type and a JSON payload</strong> with before/after values.</span></li>
+              <li class="flex gap-3"><span class="mt-2 w-1.5 h-1.5 rounded-full bg-emerald-600 shrink-0"></span><span><strong>Typed events across the estate</strong> — onboarding, transfers, terminations, leave, payroll runs, SaaS grants, jurisdiction switches, snapshot restores.</span></li>
+              <li class="flex gap-3"><span class="mt-2 w-1.5 h-1.5 rounded-full bg-emerald-600 shrink-0"></span><span><strong>Bounded retention and export</strong> — the ledger caps at 400 events and exports to CSV or JSON for inspection.</span></li>
+              <li class="flex gap-3"><span class="mt-2 w-1.5 h-1.5 rounded-full bg-emerald-600 shrink-0"></span><span><strong>Statutory retention citations</strong> live beside it: IRS 4-year wage records, UK GDPR storage limitation, HGB/AO 6–10 years, Companies Act 8 years.</span></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Gallery strip -->
+    <div class="mt-14 grid md:grid-cols-2 gap-5">
+      <figure class="reveal rounded-2xl overflow-hidden border border-slate-200 dark:border-white/10 bg-white dark:bg-navy-800">
+        <img src="assets/screenshots/02-core-directory-light.png" loading="lazy" width="2880" height="1800"
+             alt="Employee directory with filter rail, headcount telemetry and worker records" class="block w-full h-auto cursor-zoom-in" onclick="openLightbox(this)"/>
+        <figcaption class="px-5 py-4 border-t border-slate-100 dark:border-white/10">
+          <span class="block font-semibold text-slate-900 dark:text-white text-[15px]">Core Directory &amp; Dossiers</span>
+          <span class="block text-[13.5px] text-slate-500 dark:text-slate-400 mt-2">Filterable workforce register, per-worker dossiers, compensation visibility gated by role.</span>
+        </figcaption>
+      </figure>
+      <figure class="reveal rounded-2xl overflow-hidden border border-slate-200 dark:border-white/10 bg-white dark:bg-navy-800" style="transition-delay:.08s">
+        <img src="assets/screenshots/05-org-hierarchy-light.png" loading="lazy" width="2880" height="1800"
+             alt="Organisational hierarchy chart with reporting lines and position coverage" class="block w-full h-auto cursor-zoom-in" onclick="openLightbox(this)"/>
+        <figcaption class="px-5 py-4 border-t border-slate-100 dark:border-white/10">
+          <span class="block font-semibold text-slate-900 dark:text-white text-[15px]">Org Hierarchy &amp; Position Control</span>
+          <span class="block text-[13.5px] text-slate-500 dark:text-slate-400 mt-2">Reporting lines, seat occupancy and structural gaps rendered from live master data.</span>
+        </figcaption>
+      </figure>
+    </div>
+
+    <!-- Dual-theme band -->
+    <div class="mt-14 reveal rounded-3xl overflow-hidden border border-slate-200 dark:border-white/10 bg-white dark:bg-navy-800">
+      <div class="grid lg:grid-cols-2 gap-8 p-6 sm:p-9 items-center">
+        <div>
+          <p class="eyebrow text-emerald-700 dark:text-emerald-400">Dual-theme by design</p>
+          <h3 class="mt-3 text-2xl font-extrabold tracking-[-0.01em] text-slate-900 dark:text-white">Light and dark are both first-class.</h3>
+          <p class="mt-3 text-[15px] leading-relaxed text-slate-600 dark:text-slate-300">
+            The marketing page you are reading and the simulator itself use the same discipline: a class on
+            <span class="mono text-[13px]">&lt;html&gt;</span>, applied before first paint so there is no flash of the wrong
+            theme, persisted per browser and layered as a <span class="mono text-[13px]">@media screen</span> override so
+            printing always lands on clean white.
+          </p>
+          <div class="mt-5 flex flex-wrap gap-2">
+            <span class="rounded-md border border-slate-200 dark:border-white/15 px-2.5 py-1 eyebrow text-slate-600 dark:text-slate-300">Pre-paint head script</span>
+            <span class="rounded-md border border-slate-200 dark:border-white/15 px-2.5 py-1 eyebrow text-slate-600 dark:text-slate-300">No FOUC</span>
+            <span class="rounded-md border border-slate-200 dark:border-white/15 px-2.5 py-1 eyebrow text-slate-600 dark:text-slate-300">Persisted preference</span>
+            <span class="rounded-md border border-slate-200 dark:border-white/15 px-2.5 py-1 eyebrow text-slate-600 dark:text-slate-300">Print-safe</span>
+          </div>
+          <p class="mt-5 text-[14px] text-slate-500 dark:text-slate-400">
+            Try it: the toggle in the header switches this page — the same control lives in the simulator's Settings suite
+            alongside Comfortable / Compact density.
+          </p>
+        </div>
+        <figure class="rounded-xl overflow-hidden border border-slate-200 dark:border-white/10 shadow-lg">
+          <img src="assets/screenshots/directory-theme-split-showcase.png" loading="lazy" width="2880" height="1800"
+               alt="Employee directory split 50/50 between light mode on the left and dark mode on the right"
+               class="block w-full h-auto cursor-zoom-in" onclick="openLightbox(this)"/>
+        </figure>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================== D · PEOPLECORE ACADEMY ======================= -->
+<section id="curriculum" class="py-20 sm:py-28 bg-white dark:bg-navy-900">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6">
+    <div class="max-w-3xl reveal">
+      <p class="eyebrow text-emerald-700 dark:text-emerald-400">The PeopleCore Academy</p>
+      <h2 class="mt-3 text-[clamp(1.8rem,3.4vw,2.6rem)] font-extrabold tracking-[-0.02em] text-slate-900 dark:text-white">
+        Ten mastery modules. One hundred questions. One verifiable credential.
+      </h2>
+      <p class="mt-4 text-lg text-slate-600 dark:text-slate-300">
+        A structured learning path with a dual-pane workbench: curriculum and statutory citations on one side,
+        live formula labs on the other. You do not read the maths — you run it.
+      </p>
+    </div>
+
+    <!-- Workbench -->
+    <div class="mt-10 grid lg:grid-cols-[minmax(0,1.6fr)_minmax(0,1fr)] gap-6 items-start reveal">
+      <figure class="rounded-2xl overflow-hidden border border-slate-200 dark:border-white/10 bg-white dark:bg-navy-800 shadow-xl shadow-slate-900/5 dark:shadow-black/40">
+        <img src="assets/screenshots/09-academy-bradford-lab-light.png" loading="lazy" width="2880" height="1800"
+             alt="Academy dual-pane workbench: curriculum index on the left, module article in the centre, statutory inspector and Bradford Factor formula lab on the right"
+             class="block w-full h-auto cursor-zoom-in" onclick="openLightbox(this)"/>
+        <figcaption class="px-5 py-4 border-t border-slate-100 dark:border-white/10 text-[13.5px] text-slate-500 dark:text-slate-400">
+          <span class="font-semibold text-slate-900 dark:text-white">Dual-pane workbench.</span>
+          Left: curriculum index and progress. Centre: the module article. Right: statutory inspector + live formula lab.
+        </figcaption>
+      </figure>
+
+      <div class="space-y-4">
+        <!-- Exam callout -->
+        <div class="rounded-2xl border-2 border-emerald-700/25 bg-emerald-50 dark:bg-emerald-500/10 dark:border-emerald-400/25 p-6">
+          <div class="flex items-center gap-3">
+            <span class="w-10 h-10 rounded-xl bg-emerald-700 text-white grid place-items-center shrink-0">
+              <svg viewBox="0 0 24 24" class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 11l3 3 8-8"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+            </span>
+            <div>
+              <p class="text-lg font-extrabold text-slate-900 dark:text-white leading-tight">100-question examination suite</p>
+              <p class="eyebrow text-emerald-800 dark:text-emerald-300 mt-2">80% threshold per module</p>
+            </div>
+          </div>
+          <p class="mt-4 text-[15px] leading-relaxed text-slate-700 dark:text-slate-200">
+            Ten scenario questions per module, graded instantly with a written debrief on every answer. Score
+            <strong class="mono">8/10</strong> or better to clear the flight-check; fail and you get a targeted explanation
+            plus a retake. All ten must clear before the credential unlocks.
+          </p>
+        </div>
+
+        <!-- Formula lab closeups -->
+        <div class="grid sm:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2 gap-4">
+          <figure class="rounded-xl overflow-hidden border border-slate-200 dark:border-white/10 bg-white dark:bg-navy-800">
+            <img src="assets/screenshots/10-formula-lab-bradford-closeup.png" loading="lazy" width="692" height="810"
+                 alt="Bradford Factor calculator card with absence spells and total days sliders scoring 135, high risk"
+                 class="block w-full h-auto cursor-zoom-in" onclick="openLightbox(this)"/>
+            <figcaption class="px-4 py-3 text-[13px] text-slate-500 dark:text-slate-400 border-t border-slate-100 dark:border-white/10">Bradford Factor lab · B = S² × D</figcaption>
+          </figure>
+          <figure class="rounded-xl overflow-hidden border border-slate-200 dark:border-white/10 bg-white dark:bg-navy-800">
+            <img src="assets/screenshots/12-formula-lab-eor-closeup.png" loading="lazy" width="692" height="832"
+                 alt="Employer of Record versus legal entity break-even calculator showing the crossing headcount in FTE"
+                 class="block w-full h-auto cursor-zoom-in" onclick="openLightbox(this)"/>
+            <figcaption class="px-4 py-3 text-[13px] text-slate-500 dark:text-slate-400 border-t border-slate-100 dark:border-white/10">EOR vs. entity break-even lab</figcaption>
+          </figure>
+        </div>
+      </div>
+    </div>
+
+    <!-- 10 modules -->
+    <div class="mt-14">
+      <div class="flex items-end justify-between gap-4 flex-wrap">
+        <h3 class="text-xl font-bold text-slate-900 dark:text-white">The 10 mastery modules</h3>
+        <p class="eyebrow text-slate-500 dark:text-slate-400">~16 min read · embedded knowledge checks each</p>
+      </div>
+
+      <ol class="mt-6 grid sm:grid-cols-2 xl:grid-cols-2 gap-4">
+        <li class="reveal rounded-2xl border border-slate-200 dark:border-white/10 bg-[#f8fafc] dark:bg-navy-800 p-5 flex gap-4">
+          <span class="shrink-0 w-9 h-9 rounded-lg bg-slate-900 dark:bg-white/10 text-white grid place-items-center mono text-sm font-bold">01</span>
+          <div>
+            <h4 class="font-bold text-slate-900 dark:text-white leading-snug">HRIS Foundations, Data Models &amp; Bulk Ingestion</h4>
+            <p class="mt-1.5 text-[14.5px] leading-relaxed text-slate-600 dark:text-slate-300">Systems of record, the reusable seat, validated CSV ingestion and the master-data SOP.</p>
+            <div class="mt-3 flex flex-wrap gap-2">
+              <span class="rounded bg-indigo-50 dark:bg-indigo-500/15 px-2 py-0.5 text-[11px] font-semibold text-indigo-700 dark:text-indigo-300">HRIS architecture &amp; data models</span>
+              <span class="rounded bg-slate-100 dark:bg-white/10 px-2 py-0.5 text-[11px] font-semibold text-slate-600 dark:text-slate-300">16 min · Core</span>
+            </div>
+          </div>
+        </li>
+
+        <li class="reveal rounded-2xl border border-slate-200 dark:border-white/10 bg-[#f8fafc] dark:bg-navy-800 p-5 flex gap-4" style="transition-delay:.05s">
+          <span class="shrink-0 w-9 h-9 rounded-lg bg-slate-900 dark:bg-white/10 text-white grid place-items-center mono text-sm font-bold">02</span>
+          <div>
+            <h4 class="font-bold text-slate-900 dark:text-white leading-snug">Leave Taxonomy, Absence Policies &amp; Labor Regulations</h4>
+            <p class="mt-1.5 text-[14.5px] leading-relaxed text-slate-600 dark:text-slate-300">Casual, privilege, sick, parental and comp-off categories with accrual mathematics and the approval lifecycle.</p>
+            <div class="mt-3 flex flex-wrap gap-2">
+              <span class="rounded bg-indigo-50 dark:bg-indigo-500/15 px-2 py-0.5 text-[11px] font-semibold text-indigo-700 dark:text-indigo-300">Leave &amp; absence · Bradford Factor</span>
+              <span class="rounded bg-slate-100 dark:bg-white/10 px-2 py-0.5 text-[11px] font-semibold text-slate-600 dark:text-slate-300">18 min · Compliance</span>
+            </div>
+          </div>
+        </li>
+
+        <li class="reveal rounded-2xl border border-slate-200 dark:border-white/10 bg-[#f8fafc] dark:bg-navy-800 p-5 flex gap-4" style="transition-delay:.1s">
+          <span class="shrink-0 w-9 h-9 rounded-lg bg-slate-900 dark:bg-white/10 text-white grid place-items-center mono text-sm font-bold">03</span>
+          <div>
+            <h4 class="font-bold text-slate-900 dark:text-white leading-snug">Payroll Science, Statutory Withholding &amp; Compensation</h4>
+            <p class="mt-1.5 text-[14.5px] leading-relaxed text-slate-600 dark:text-slate-300">Gross-to-net decomposition, the four-stage pipeline, compliant paystubs and an interactive tax sandbox.</p>
+            <div class="mt-3 flex flex-wrap gap-2">
+              <span class="rounded bg-indigo-50 dark:bg-indigo-500/15 px-2 py-0.5 text-[11px] font-semibold text-indigo-700 dark:text-indigo-300">Global statutory payroll &amp; tax</span>
+              <span class="rounded bg-slate-100 dark:bg-white/10 px-2 py-0.5 text-[11px] font-semibold text-slate-600 dark:text-slate-300">20 min · Calculation</span>
+            </div>
+          </div>
+        </li>
+
+        <li class="reveal rounded-2xl border border-slate-200 dark:border-white/10 bg-[#f8fafc] dark:bg-navy-800 p-5 flex gap-4" style="transition-delay:.15s">
+          <span class="shrink-0 w-9 h-9 rounded-lg bg-slate-900 dark:bg-white/10 text-white grid place-items-center mono text-sm font-bold">04</span>
+          <div>
+            <h4 class="font-bold text-slate-900 dark:text-white leading-snug">Talent Acquisition, ATS Architecture &amp; Pipeline Hygiene</h4>
+            <p class="mt-1.5 text-[14.5px] leading-relaxed text-slate-600 dark:text-slate-300">The five recruitment gates, structured scorecards, the ATS-to-HRIS bridge and EEO safeguards.</p>
+            <div class="mt-3 flex flex-wrap gap-2">
+              <span class="rounded bg-indigo-50 dark:bg-indigo-500/15 px-2 py-0.5 text-[11px] font-semibold text-indigo-700 dark:text-indigo-300">Adverse impact · EEOC 80% rule</span>
+              <span class="rounded bg-slate-100 dark:bg-white/10 px-2 py-0.5 text-[11px] font-semibold text-slate-600 dark:text-slate-300">15 min · Operations</span>
+            </div>
+          </div>
+        </li>
+
+        <li class="reveal rounded-2xl border border-slate-200 dark:border-white/10 bg-[#f8fafc] dark:bg-navy-800 p-5 flex gap-4" style="transition-delay:.2s">
+          <span class="shrink-0 w-9 h-9 rounded-lg bg-slate-900 dark:bg-white/10 text-white grid place-items-center mono text-sm font-bold">05</span>
+          <div>
+            <h4 class="font-bold text-slate-900 dark:text-white leading-snug">Org Design, Matrix Hierarchies &amp; Position Management</h4>
+            <p class="mt-1.5 text-[14.5px] leading-relaxed text-slate-600 dark:text-slate-300">Position-centric architecture, solid vs. dotted lines, the 9-box grid and structural failure modes.</p>
+            <div class="mt-3 flex flex-wrap gap-2">
+              <span class="rounded bg-indigo-50 dark:bg-indigo-500/15 px-2 py-0.5 text-[11px] font-semibold text-indigo-700 dark:text-indigo-300">Org design &amp; position control</span>
+              <span class="rounded bg-slate-100 dark:bg-white/10 px-2 py-0.5 text-[11px] font-semibold text-slate-600 dark:text-slate-300">16 min · Structure</span>
+            </div>
+          </div>
+        </li>
+
+        <li class="reveal rounded-2xl border border-slate-200 dark:border-white/10 bg-[#f8fafc] dark:bg-navy-800 p-5 flex gap-4" style="transition-delay:.25s">
+          <span class="shrink-0 w-9 h-9 rounded-lg bg-slate-900 dark:bg-white/10 text-white grid place-items-center mono text-sm font-bold">06</span>
+          <div>
+            <h4 class="font-bold text-slate-900 dark:text-white leading-snug">Performance Engineering, Calibrations &amp; Fair Discipline</h4>
+            <p class="mt-1.5 text-[14.5px] leading-relaxed text-slate-600 dark:text-slate-300">From annual ratings to OKRs, calibration against grade inflation, and legally defensible PIPs.</p>
+            <div class="mt-3 flex flex-wrap gap-2">
+              <span class="rounded bg-indigo-50 dark:bg-indigo-500/15 px-2 py-0.5 text-[11px] font-semibold text-indigo-700 dark:text-indigo-300">Performance &amp; merit grids</span>
+              <span class="rounded bg-slate-100 dark:bg-white/10 px-2 py-0.5 text-[11px] font-semibold text-slate-600 dark:text-slate-300">15 min · Leadership</span>
+            </div>
+          </div>
+        </li>
+
+        <li class="reveal rounded-2xl border border-slate-200 dark:border-white/10 bg-[#f8fafc] dark:bg-navy-800 p-5 flex gap-4" style="transition-delay:.3s">
+          <span class="shrink-0 w-9 h-9 rounded-lg bg-slate-900 dark:bg-white/10 text-white grid place-items-center mono text-sm font-bold">07</span>
+          <div>
+            <h4 class="font-bold text-slate-900 dark:text-white leading-snug">Workforce Scheduling, Overtime Compliance &amp; Shift Management</h4>
+            <p class="mt-1.5 text-[14.5px] leading-relaxed text-slate-600 dark:text-slate-300">Predictive scheduling, the FLSA 40-hour rule, blended overtime rates and coverage planning.</p>
+            <div class="mt-3 flex flex-wrap gap-2">
+              <span class="rounded bg-indigo-50 dark:bg-indigo-500/15 px-2 py-0.5 text-[11px] font-semibold text-indigo-700 dark:text-indigo-300">Labor law &amp; overtime</span>
+              <span class="rounded bg-slate-100 dark:bg-white/10 px-2 py-0.5 text-[11px] font-semibold text-slate-600 dark:text-slate-300">14 min · Compliance</span>
+            </div>
+          </div>
+        </li>
+
+        <li class="reveal rounded-2xl border border-slate-200 dark:border-white/10 bg-[#f8fafc] dark:bg-navy-800 p-5 flex gap-4" style="transition-delay:.35s">
+          <span class="shrink-0 w-9 h-9 rounded-lg bg-slate-900 dark:bg-white/10 text-white grid place-items-center mono text-sm font-bold">08</span>
+          <div>
+            <h4 class="font-bold text-slate-900 dark:text-white leading-snug">Global Employment: Direct, Contractor &amp; Employer of Record</h4>
+            <p class="mt-1.5 text-[14.5px] leading-relaxed text-slate-600 dark:text-slate-300">W-2 vs. 1099, the three-pronged test, EOR mechanics and the true cost of misclassification.</p>
+            <div class="mt-3 flex flex-wrap gap-2">
+              <span class="rounded bg-indigo-50 dark:bg-indigo-500/15 px-2 py-0.5 text-[11px] font-semibold text-indigo-700 dark:text-indigo-300">Global mobility · PE risk</span>
+              <span class="rounded bg-slate-100 dark:bg-white/10 px-2 py-0.5 text-[11px] font-semibold text-slate-600 dark:text-slate-300">17 min · Legal Risk</span>
+            </div>
+          </div>
+        </li>
+
+        <li class="reveal rounded-2xl border border-slate-200 dark:border-white/10 bg-[#f8fafc] dark:bg-navy-800 p-5 flex gap-4" style="transition-delay:.4s">
+          <span class="shrink-0 w-9 h-9 rounded-lg bg-slate-900 dark:bg-white/10 text-white grid place-items-center mono text-sm font-bold">09</span>
+          <div>
+            <h4 class="font-bold text-slate-900 dark:text-white leading-snug">Unified IT, Identity Lifecycle &amp; Access Control</h4>
+            <p class="mt-1.5 text-[14.5px] leading-relaxed text-slate-600 dark:text-slate-300">HR as the source of truth, SCIM synchronisation, least privilege and the 24-hour offboarding protocol.</p>
+            <div class="mt-3 flex flex-wrap gap-2">
+              <span class="rounded bg-indigo-50 dark:bg-indigo-500/15 px-2 py-0.5 text-[11px] font-semibold text-indigo-700 dark:text-indigo-300">Identity · RBAC · SCIM</span>
+              <span class="rounded bg-slate-100 dark:bg-white/10 px-2 py-0.5 text-[11px] font-semibold text-slate-600 dark:text-slate-300">14 min · Security</span>
+            </div>
+          </div>
+        </li>
+
+        <li class="reveal rounded-2xl border border-slate-200 dark:border-white/10 bg-[#f8fafc] dark:bg-navy-800 p-5 flex gap-4" style="transition-delay:.45s">
+          <span class="shrink-0 w-9 h-9 rounded-lg bg-slate-900 dark:bg-white/10 text-white grid place-items-center mono text-sm font-bold">10</span>
+          <div>
+            <h4 class="font-bold text-slate-900 dark:text-white leading-snug">Audit Trails, Data Retention &amp; Regulatory Governance</h4>
+            <p class="mt-1.5 text-[14.5px] leading-relaxed text-slate-600 dark:text-slate-300">Append-only ledgers, statutory retention schedules and audit-readiness for inspections.</p>
+            <div class="mt-3 flex flex-wrap gap-2">
+              <span class="rounded bg-indigo-50 dark:bg-indigo-500/15 px-2 py-0.5 text-[11px] font-semibold text-indigo-700 dark:text-indigo-300">Reporting &amp; governance</span>
+              <span class="rounded bg-slate-100 dark:bg-white/10 px-2 py-0.5 text-[11px] font-semibold text-slate-600 dark:text-slate-300">16 min · Governance</span>
+            </div>
+          </div>
+        </li>
+      </ol>
+
+      <p class="mt-6 text-[14.5px] text-slate-500 dark:text-slate-400 max-w-3xl">
+        The sandbox and the academy share one dataset: workforce analytics, attrition modelling, benefits and total-rewards
+        retention rules (ERISA · COBRA notice trails) and compensation labs are all practised on the same 20-worker company
+        the payroll engine pays.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- ============================ E · PROFESSIONAL CREDENTIAL ==================== -->
+<section id="credentials" class="py-20 sm:py-28 bg-[#f8fafc] dark:bg-navy-900/60 border-y border-slate-200 dark:border-white/10">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6">
+    <div class="grid lg:grid-cols-[minmax(0,1fr)_minmax(0,1.25fr)] gap-10 lg:gap-14 items-center">
+      <div class="reveal">
+        <p class="eyebrow text-emerald-700 dark:text-emerald-400">Verified professional credential</p>
+        <h2 class="mt-3 text-[clamp(1.8rem,3.4vw,2.6rem)] font-extrabold tracking-[-0.02em] text-slate-900 dark:text-white">
+          Certificate of Practical Mastery
+        </h2>
+        <p class="mt-3 text-lg text-slate-600 dark:text-slate-300">
+          In <em>Enterprise HRIS Architecture &amp; Global Workforce Operations</em> — issued only after all ten
+          flight-checks clear, then written to the immutable audit ledger as an award event.
+        </p>
+
+        <ul class="mt-7 space-y-5">
+          <li class="flex gap-4">
+            <span class="shrink-0 w-10 h-10 rounded-xl bg-slate-900 dark:bg-white/10 text-white grid place-items-center">
+              <svg viewBox="0 0 24 24" class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-4 0v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
+            </span>
+            <div>
+              <h3 class="font-bold text-slate-900 dark:text-white">1-Click LinkedIn certification sync</h3>
+              <p class="mt-2 text-[15px] leading-relaxed text-slate-600 dark:text-slate-300">
+                Opens LinkedIn's <span class="mono text-[13px]">profile/add?startTask=CERTIFICATION_NAME</span> flow with the
+                credential name, <em>PeopleCore Learning Platform</em>, issue year/month and credential ID already filled in —
+                Coursera-style, no retyping.
+              </p>
+            </div>
+          </li>
+          <li class="flex gap-4">
+            <span class="shrink-0 w-10 h-10 rounded-xl bg-slate-900 dark:bg-white/10 text-white grid place-items-center">
+              <svg viewBox="0 0 24 24" class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/><path d="M12 15v2"/></svg>
+            </span>
+            <div>
+              <h3 class="font-bold text-slate-900 dark:text-white">Name-locking &amp; recipient immutability</h3>
+              <p class="mt-2 text-[15px] leading-relaxed text-slate-600 dark:text-slate-300">
+                A two-step immutability seal freezes the recipient: the credential ID is generated once and never re-issued,
+                the issue date never re-stamps, and any later name correction is logged as a separate
+                <span class="mono text-[13px]">CERTIFICATE_UPDATED</span> event.
+              </p>
+            </div>
+          </li>
+          <li class="flex gap-4">
+            <span class="shrink-0 w-10 h-10 rounded-xl bg-slate-900 dark:bg-white/10 text-white grid place-items-center">
+              <svg viewBox="0 0 24 24" class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M8 13h8M8 17h5"/></svg>
+            </span>
+            <div>
+              <h3 class="font-bold text-slate-900 dark:text-white">Framing-grade rendering</h3>
+              <p class="mt-2 text-[15px] leading-relaxed text-slate-600 dark:text-slate-300">
+                A 1120 × 792 A4-landscape credential with guilloche trim, a signature block and every competency printed on
+                the face — printable to PDF at full quality or captured as a high-resolution image for a portfolio.
+              </p>
+            </div>
+          </li>
+        </ul>
+      </div>
+
+      <figure class="reveal" style="transition-delay:.1s">
+        <div class="rounded-2xl overflow-hidden border border-slate-200 dark:border-white/10 shadow-2xl shadow-slate-900/10 dark:shadow-black/50 bg-white">
+          <img src="assets/screenshots/14-certificate-closeup-light.png?v=20260930" loading="lazy" width="2240" height="1586"
+               alt="Certificate of Practical Mastery awarded to Jane Doe listing nine competencies, credential ID, issue date and registrar signature"
+               class="block w-full h-auto cursor-zoom-in" onclick="openLightbox(this)"/>
+        </div>
+        <figcaption class="mt-3 text-[13.5px] text-slate-500 dark:text-slate-400">
+          Simulated credential — verification hash generated locally in the browser. Nothing is transmitted to a third-party issuer.
+        </figcaption>
+      </figure>
+    </div>
+  </div>
+</section>
+
+<!-- ========================= F · ARCHITECTURE & SOVEREIGNTY ==================== -->
+<section id="architecture" class="py-20 sm:py-28 bg-white dark:bg-navy-900">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6">
+    <div class="max-w-3xl reveal">
+      <p class="eyebrow text-emerald-700 dark:text-emerald-400">Under the hood</p>
+      <h2 class="mt-3 text-[clamp(1.8rem,3.4vw,2.6rem)] font-extrabold tracking-[-0.02em] text-slate-900 dark:text-white">
+        Data sovereignty by construction.
+      </h2>
+      <p class="mt-4 text-lg text-slate-600 dark:text-slate-300">
+        No backend, no build step, no database server. The engineering choices are the product features: what you cannot
+        send, you cannot leak.
+      </p>
+    </div>
+
+    <div class="mt-12 grid md:grid-cols-2 xl:grid-cols-3 gap-5">
+      <article class="reveal rounded-2xl border border-slate-200 dark:border-white/10 bg-[#f8fafc] dark:bg-navy-800 p-6">
+        <p class="eyebrow text-emerald-700 dark:text-emerald-400">01 · Dependencies</p>
+        <h3 class="mt-3 text-lg font-bold text-slate-900 dark:text-white">Zero dependencies beyond standard CDNs</h3>
+        <p class="mt-2 text-[15px] leading-relaxed text-slate-600 dark:text-slate-300">
+          Vue 3 (reactive core), Tailwind CSS, Chart.js and Google Fonts — referenced by URL, cached by the browser.
+          No npm, no bundler, no framework build, no API keys.
+        </p>
+      </article>
+
+      <article class="reveal rounded-2xl border border-slate-200 dark:border-white/10 bg-[#f8fafc] dark:bg-navy-800 p-6" style="transition-delay:.06s">
+        <p class="eyebrow text-emerald-700 dark:text-emerald-400">02 · State</p>
+        <h3 class="mt-3 text-lg font-bold text-slate-900 dark:text-white">In-browser reactive store, persisted locally</h3>
+        <p class="mt-2 text-[15px] leading-relaxed text-slate-600 dark:text-slate-300">
+          A single Vue reactive document — employees, positions, pipeline, leave, payroll, ledger — is mirrored to
+          <span class="mono text-[13px]">localStorage</span> after every mutation. Close the tab, come back next week,
+          the company is exactly as you left it.
+        </p>
+      </article>
+
+      <article class="reveal rounded-2xl border border-slate-200 dark:border-white/10 bg-[#f8fafc] dark:bg-navy-800 p-6" style="transition-delay:.12s">
+        <p class="eyebrow text-emerald-700 dark:text-emerald-400">03 · Portability</p>
+        <h3 class="mt-3 text-lg font-bold text-slate-900 dark:text-white">JSON snapshots in and out</h3>
+        <p class="mt-2 text-[15px] leading-relaxed text-slate-600 dark:text-slate-300">
+          One click serialises the entire environment — profiles, compensation, pipeline, leave, payroll and audit ledger —
+          to a schema-checked <span class="mono text-[13px]">.json</span> file. Restore it on another machine and the ledger
+          records the restore as an event.
+        </p>
+      </article>
+
+      <article class="reveal rounded-2xl border border-slate-200 dark:border-white/10 bg-[#f8fafc] dark:bg-navy-800 p-6" style="transition-delay:.18s">
+        <p class="eyebrow text-emerald-700 dark:text-emerald-400">04 · Offline</p>
+        <h3 class="mt-3 text-lg font-bold text-slate-900 dark:text-white">Runs from a file:// URL, offline</h3>
+        <p class="mt-2 text-[15px] leading-relaxed text-slate-600 dark:text-slate-300">
+          After the first load the runtime is cached to the browser — the built-in asset diagnostic reports
+          <span class="font-semibold text-slate-800 dark:text-slate-100">“100% OFFLINE READY”</span>. Double-click the file
+          on a plane and the sandbox still boots.
+        </p>
+      </article>
+
+      <article class="reveal rounded-2xl border border-slate-200 dark:border-white/10 bg-[#f8fafc] dark:bg-navy-800 p-6" style="transition-delay:.24s">
+        <p class="eyebrow text-emerald-700 dark:text-emerald-400">05 · Access control</p>
+        <h3 class="mt-3 text-lg font-bold text-slate-900 dark:text-white">Three RBAC roles, enforced in the UI</h3>
+        <p class="mt-2 text-[15px] leading-relaxed text-slate-600 dark:text-slate-300">
+          HR Super Admin, HR Manager and Employee each render a different application: locked modules, masked compensation
+          and self-service payslips — the same permission surface enterprise HRIS platforms gate behind a licence tier.
+        </p>
+      </article>
+
+      <article class="reveal rounded-2xl border border-slate-200 dark:border-white/10 bg-[#f8fafc] dark:bg-navy-800 p-6" style="transition-delay:.3s">
+        <p class="eyebrow text-emerald-700 dark:text-emerald-400">06 · Delivery</p>
+        <h3 class="mt-3 text-lg font-bold text-slate-900 dark:text-white">One HTML file, self-contained</h3>
+        <p class="mt-2 text-[15px] leading-relaxed text-slate-600 dark:text-slate-300">
+          Markup, styles, script, seed data, the icon sprite and the certificate engine all live in one document — no
+          assets folder, no service worker, no install step. The in-app Settings suite carries the data-exchange and
+          architecture guide next to appearance, storage and danger-zone controls.
+        </p>
+      </article>
+    </div>
+
+    <!-- tech spec row -->
+    <div class="mt-10 reveal rounded-2xl border border-slate-200 dark:border-white/10 overflow-hidden">
+      <table class="w-full text-left text-[14.5px]">
+        <caption class="sr-only">Technical specification of the PeopleCore simulator</caption>
+        <tbody class="divide-y divide-slate-200 dark:divide-white/10">
+          <tr class="bg-slate-900 text-slate-200">
+            <th scope="row" class="px-5 py-3 font-semibold w-52">Runtime</th>
+            <td class="px-5 py-3 mono text-slate-100">Browser only · Vue 3 · Chart.js · Tailwind</td>
+          </tr>
+          <tr class="bg-white dark:bg-navy-800">
+            <th scope="row" class="px-5 py-3 font-semibold text-slate-700 dark:text-slate-300">Persistence</th>
+            <td class="px-5 py-3 mono text-slate-600 dark:text-slate-300">localStorage · JSON snapshot export / import</td>
+          </tr>
+          <tr class="bg-white dark:bg-navy-800">
+            <th scope="row" class="px-5 py-3 font-semibold text-slate-700 dark:text-slate-300">Jurisdictions</th>
+            <td class="px-5 py-3 mono text-slate-600 dark:text-slate-300">US (USD $) · UK (GBP £) · EU/DE (EUR €) · IN (INR ₹)</td>
+          </tr>
+          <tr class="bg-white dark:bg-navy-800">
+            <th scope="row" class="px-5 py-3 font-semibold text-slate-700 dark:text-slate-300">Exports</th>
+            <td class="px-5 py-3 mono text-slate-600 dark:text-slate-300">CSV templates &amp; registers · JSON snapshot · PDF certificate</td>
+          </tr>
+          <tr class="bg-white dark:bg-navy-800">
+            <th scope="row" class="px-5 py-3 font-semibold text-slate-700 dark:text-slate-300">Network calls</th>
+            <td class="px-5 py-3 mono text-slate-600 dark:text-slate-300">CDN asset loads only · zero telemetry, zero tracking</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- ============================== G · CONVERSION FOOTER ======================== -->
+<section id="download" class="relative overflow-hidden bg-navy dark:bg-black">
+  <div class="absolute inset-0 hero-grid opacity-60 pointer-events-none" aria-hidden="true"></div>
+  <div class="relative max-w-5xl mx-auto px-4 sm:px-6 py-20 sm:py-28 text-center">
+    <p class="eyebrow text-emerald-400 reveal">Free · Open source · Local-first</p>
+    <h2 class="mt-4 text-[clamp(2rem,4vw,3.1rem)] font-extrabold tracking-[-0.02em] text-white reveal" style="transition-delay:.05s">
+      Take the whole platform with you.
+    </h2>
+    <p class="mt-4 text-lg text-slate-300 max-w-2xl mx-auto reveal" style="transition-delay:.1s">
+      One file. Every module, every jurisdiction, the full curriculum and the certification engine —
+      delivered the moment you click.
+    </p>
+
+    <div class="mt-9 flex flex-col sm:flex-row items-center justify-center gap-3 reveal" style="transition-delay:.15s">
+      <button type="button" onclick="downloadPeopleCoreApp()"
+        class="group inline-flex items-center justify-center gap-2.5 h-13 sm:h-14 px-8 py-4 rounded-2xl bg-emerald-700 hover:bg-emerald-600 active:bg-emerald-800 text-white text-base sm:text-lg font-bold shadow-2xl shadow-emerald-700/30 transition focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400 focus-visible:ring-offset-2 focus-visible:ring-offset-navy">
+        <svg viewBox="0 0 24 24" class="w-5 h-5 transition group-hover:translate-y-0.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="m7 10 5 5 5-5"/><path d="M12 15V3"/></svg>
+        Download Free (Single-File HTML)
+      </button>
+      <a href="#features"
+        class="inline-flex items-center justify-center gap-2 h-13 sm:h-14 px-8 py-4 rounded-2xl border border-white/25 text-white text-base sm:text-lg font-semibold hover:bg-white/10 transition">
+        Tour the features
+      </a>
+    </div>
+
+    <p class="mt-6 text-[15px] text-slate-400 reveal" style="transition-delay:.2s">
+      No installation, no account creation, no Docker required. Runs immediately in any browser.
+    </p>
+    <p class="mt-2 eyebrow text-slate-500 reveal" style="transition-delay:.25s">
+      Saves as “PeopleCore - HRIS Sandbox and Academy.html”
+    </p>
+  </div>
+</section>
+
+</main>
+
+<!-- =================================== FOOTER ================================= -->
+<footer class="bg-navy dark:bg-black border-t border-white/10">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 py-10">
+    <div class="flex flex-col md:flex-row md:items-center gap-6 justify-between">
+      <div class="flex items-center gap-2.5">
+        <span class="w-9 h-9 rounded-lg bg-brand grid place-items-center">
+          <svg viewBox="0 0 24 24" class="w-5 h-5 text-white" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true">
+            <path d="m12 2.5 9.5 5-9.5 5-9.5-5 9.5-5z"/><path d="m2.5 12.5 9.5 5 9.5-5"/><path d="m2.5 17 9.5 5 9.5-5"/>
+          </svg>
+        </span>
+        <span class="leading-tight">
+          <span class="block text-sm font-bold tracking-[0.14em] text-white">PEOPLECORE</span>
+          <span class="block eyebrow text-slate-400" style="font-size:.6rem">HRIS Sandbox &amp; Academy</span>
+        </span>
+      </div>
+
+      <nav class="flex flex-wrap gap-x-6 gap-y-2 text-sm" aria-label="Footer">
+        <a href="#features" class="text-slate-300 hover:text-white transition">Features</a>
+        <a href="#architecture" class="text-slate-300 hover:text-white transition">Architecture</a>
+        <a href="#curriculum" class="text-slate-300 hover:text-white transition">Curriculum</a>
+        <a href="#credentials" class="text-slate-300 hover:text-white transition">Credentials</a>
+        <a href="https://github.com/NitishKashyapR" target="_blank" rel="noopener noreferrer" class="text-slate-300 hover:text-white transition">GitHub</a>
+      </nav>
+
+      <div class="text-sm text-slate-400">
+        <span class="block">Product design, engineering &amp; curriculum by <span class="text-slate-200 font-semibold">Nitish Kashyap R</span></span>
+        <span class="block mt-1 mono text-[12.5px]">
+          <a href="https://github.com/NitishKashyapR" target="_blank" rel="noopener noreferrer" class="hover:text-white transition">github.com/NitishKashyapR</a>
+          ·
+          <a href="https://www.linkedin.com/in/nitishkashyapr" target="_blank" rel="noopener noreferrer" class="hover:text-white transition">linkedin.com/in/nitishkashyapr</a>
+        </span>
+      </div>
+    </div>
+
+    <div class="mt-8 pt-6 border-t border-white/10 flex flex-col sm:flex-row gap-3 justify-between text-[13px] text-slate-500">
+      <p>PeopleCore is an open, local-first simulation for training and evaluation. Employee records, payroll and credentials are simulated data.</p>
+      <button type="button" onclick="downloadPeopleCoreApp()" class="text-emerald-400 hover:text-emerald-300 font-semibold self-start sm:self-auto">
+        Download the simulator →
+      </button>
+    </div>
+  </div>
+</footer>
+
+<!-- ================================= LIGHTBOX ================================= -->
+<div id="lightbox" class="fixed inset-0 z-[70] hidden items-center justify-center p-4 sm:p-8 bg-navy/95 backdrop-blur-sm" role="dialog" aria-modal="true" aria-label="Screenshot preview">
+  <button type="button" id="lightboxClose" aria-label="Close preview"
+    class="absolute top-4 right-4 w-10 h-10 grid place-items-center rounded-lg border border-white/20 text-white hover:bg-white/10 transition">
+    <svg viewBox="0 0 24 24" class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg>
+  </button>
+  <img id="lightboxImg" src="" alt="" class="max-w-full max-h-full rounded-lg shadow-2xl object-contain"/>
+</div>
+
+<script>
+/* ------------------------------------------------------------------ download */
+async function downloadPeopleCoreApp() {
+  try {
+    const response = await fetch('./index.html');
+    const blob = await response.blob();
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'PeopleCore - HRIS Sandbox and Academy.html';
+    document.body.appendChild(a);
+    a.click();
+    window.URL.revokeObjectURL(url);
+    document.body.removeChild(a);
+  } catch (err) {
+    console.error('Download failed, falling back to direct link', err);
+    window.location.href = './index.html';
+  }
+}
+
+/* ---------------------------------------------------------------------- theme */
+(function () {
+  var root = document.documentElement;
+  var btn = document.getElementById('themeToggle');
+  function apply(dark) { root.classList.toggle('dark', dark); }
+  btn.addEventListener('click', function () {
+    var dark = !root.classList.contains('dark');
+    apply(dark);
+    try { localStorage.setItem('landing.theme', dark ? 'dark' : 'light'); } catch (e) {}
+  });
+})();
+
+/* ----------------------------------------------------------------- mobile nav */
+(function () {
+  var btn = document.getElementById('menuToggle');
+  var menu = document.getElementById('mobileMenu');
+  function close() { menu.classList.add('hidden'); btn.setAttribute('aria-expanded', 'false'); }
+  btn.addEventListener('click', function () {
+    var open = menu.classList.toggle('hidden');
+    btn.setAttribute('aria-expanded', String(!open));
+  });
+  menu.querySelectorAll('a').forEach(function (a) { a.addEventListener('click', close); });
+})();
+
+/* ----------------------------------------------------------------------- tabs */
+(function () {
+  var tabs = Array.prototype.slice.call(document.querySelectorAll('.cap-tab'));
+  var panels = tabs.map(function (t) { return document.getElementById(t.getAttribute('aria-controls')); });
+
+  function select(i, focus) {
+    tabs.forEach(function (t, k) {
+      var on = k === i;
+      t.setAttribute('aria-selected', String(on));
+      t.tabIndex = on ? 0 : -1;
+      t.className = 'cap-tab shrink-0 h-10 px-4 rounded-lg text-[13px] font-semibold border transition ' +
+        (on ? 'bg-slate-900 text-white border-slate-900 dark:bg-white dark:text-navy dark:border-white'
+            : 'bg-white dark:bg-white/5 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-white/15 hover:border-slate-300 dark:hover:border-white/30');
+      panels[k].classList.toggle('hidden', !on);
+    });
+    if (focus) tabs[i].focus();
+  }
+
+  tabs.forEach(function (t, i) {
+    t.addEventListener('click', function () { select(i, false); });
+    t.addEventListener('keydown', function (e) {
+      if (e.key === 'ArrowRight') { e.preventDefault(); select((i + 1) % tabs.length, true); }
+      if (e.key === 'ArrowLeft')  { e.preventDefault(); select((i - 1 + tabs.length) % tabs.length, true); }
+      if (e.key === 'Home')       { e.preventDefault(); select(0, true); }
+      if (e.key === 'End')        { e.preventDefault(); select(tabs.length - 1, true); }
+    });
+  });
+})();
+
+/* ---------------------------------------------------- jurisdiction image swap */
+(function () {
+  var shots = {
+    us: { src: 'assets/screenshots/06-payroll-engine-us-light.png',
+          alt: 'Payroll engine in the US jurisdiction showing gross-to-net totals, the tax laboratory and the payroll register' },
+    de: { src: 'assets/screenshots/07-payroll-engine-de-light.png',
+          alt: 'Payroll engine switched to the EU/DE jurisdiction with euro currency, wage tax and social contribution columns' }
+  };
+  var img = document.getElementById('jurShot');
+  if (!img) return;
+  var btns = Array.prototype.slice.call(document.querySelectorAll('.jur-btn'));
+  btns.forEach(function (b) {
+    b.addEventListener('click', function () {
+      var key = b.getAttribute('data-jur');
+      img.src = shots[key].src;
+      img.alt = shots[key].alt;
+      btns.forEach(function (o) {
+        var on = o === b;
+        o.className = 'jur-btn h-7 px-3 rounded-md text-[12px] font-bold mono transition ' +
+          (on ? 'bg-white dark:bg-navy text-slate-900 dark:text-white shadow-sm'
+              : 'text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-white');
+      });
+    });
+  });
+})();
+
+/* ------------------------------------------------------------------- lightbox */
+var lightboxPrevFocus = null;
+function openLightbox(img) {
+  var box = document.getElementById('lightbox');
+  var out = document.getElementById('lightboxImg');
+  out.src = img.currentSrc || img.src;
+  out.alt = img.alt || '';
+  lightboxPrevFocus = document.activeElement;
+  box.classList.remove('hidden');
+  box.classList.add('flex');
+  document.body.style.overflow = 'hidden';
+  document.getElementById('lightboxClose').focus();
+}
+function closeLightbox() {
+  var box = document.getElementById('lightbox');
+  box.classList.add('hidden');
+  box.classList.remove('flex');
+  document.body.style.overflow = '';
+  if (lightboxPrevFocus && lightboxPrevFocus.focus) lightboxPrevFocus.focus();
+}
+(function () {
+  var box = document.getElementById('lightbox');
+  document.getElementById('lightboxClose').addEventListener('click', closeLightbox);
+  box.addEventListener('click', function (e) { if (e.target === box) closeLightbox(); });
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape' && !box.classList.contains('hidden')) closeLightbox();
+  });
+})();
+
+/* --------------------------------------------------------- scroll reveal + nav */
+(function () {
+  var items = document.querySelectorAll('.reveal');
+  if (!('IntersectionObserver' in window)) {
+    items.forEach(function (el) { el.classList.add('is-visible'); });
+    return;
+  }
+  var io = new IntersectionObserver(function (entries) {
+    entries.forEach(function (en) {
+      if (en.isIntersecting) { en.target.classList.add('is-visible'); io.unobserve(en.target); }
+    });
+  }, { rootMargin: '0px 0px -8% 0px', threshold: 0.06 });
+  items.forEach(function (el) { io.observe(el); });
+})();
+</script>
+</body>
+</html>

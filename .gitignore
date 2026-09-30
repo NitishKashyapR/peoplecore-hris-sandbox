@@ -1,0 +1,48 @@
+# ===========================================================================
+# PeopleCore / HRIS Software - local-development exclusions
+#
+# Anything matched below is INTERNAL ONLY. It must never be committed, pushed
+# to a public repository, bundled into an npm/zip package, or otherwise
+# included in a public distribution.
+#
+# Public surface is an allowlist - see EXPORT_MANIFEST.md:
+#   index.html, landing.html, assets/screenshots/*.png
+# ===========================================================================
+
+# --- AI project memory banks (sole-owner, local-only, zero-touch) -----------
+PROJECT_MEMORY.md
+PROJECT_LOGS.md
+
+# --- Agent harness config, hooks and internal notes -------------------------
+AGENTS.md
+.agents/
+.opencode/
+
+# --- Harness/tooling config (deny rules + internal integrity hashes) ---------
+opencode.json
+
+# --- Development scratch: validator output, diffs, scans, screenshots --------
+scratch/
+
+# --- Local server / environment files ---------------------------------------
+.env
+.env.*
+*.env
+*.local
+.vscode/
+.idea/
+
+# --- Dependency, build and coverage output (future-proof) -------------------
+node_modules/
+dist/
+build/
+coverage/
+.cache/
+
+# --- Logs, backups and OS/editor junk --------------------------------------
+*.log
+*.bak
+*.tmp
+.DS_Store
+Thumbs.db
+desktop.ini
