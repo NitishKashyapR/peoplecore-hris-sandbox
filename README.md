@@ -103,8 +103,8 @@ Learners who complete the curriculum can take the 100-question practical examina
 
 PeopleCore can be accessed directly or run locally using any standard static server:
 
-* **Product Landing Page**: [`landing.html`](landing.html)
-* **Interactive HRIS & Academy Application**: [`index.html`](index.html)
+* **Product Showcase & Academy Overview**: [`index.html`](index.html)
+* **Interactive HRIS Simulation Engine & Academy**: [`peoplecore-hris-sandbox.html`](peoplecore-hris-sandbox.html)
 
 ### Running Locally
 
@@ -116,7 +116,7 @@ python -m http.server 8000
 npx serve .
 ```
 
-You can also open [`landing.html`](landing.html) or [`index.html`](index.html) directly in any modern web browser.
+You can also open [`index.html`](index.html) or [`peoplecore-hris-sandbox.html`](peoplecore-hris-sandbox.html) directly in any modern web browser.
 
 ---
 

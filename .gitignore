@@ -6,7 +6,7 @@
 # included in a public distribution.
 #
 # Public surface is an allowlist:
-#   index.html, landing.html, assets/, README.md, .gitignore, .npmignore
+#   index.html, peoplecore-hris-sandbox.html, assets/, README.md, .gitignore, .npmignore
 # ===========================================================================
 
 # --- Internal manifests & documentation -------------------------------------
