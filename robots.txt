@@ -1,0 +1,8 @@
+# robots.txt for PeopleCore HRIS Sandbox & Academy
+# Canonical Host: https://nitishkashyapr.github.io/peoplecore-hris-sandbox/
+
+User-agent: *
+Allow: /
+
+# XML Sitemaps
+Sitemap: https://nitishkashyapr.github.io/peoplecore-hris-sandbox/sitemap.xml

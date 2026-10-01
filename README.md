@@ -1,6 +1,14 @@
 # PeopleCore — Workforce Academy & Enterprise HRIS Sandbox
 
 <p align="center">
+  <a href="https://nitishkashyapr.github.io/peoplecore-hris-sandbox/"><img src="https://img.shields.io/badge/Demo-Live%20Showcase-4f46e5?style=for-the-badge&logo=googlechrome&logoColor=white" alt="Live Demo" /></a>
+  <a href="peoplecore-hris-sandbox.html"><img src="https://img.shields.io/badge/Architecture-Single--File%20App-047857?style=for-the-badge" alt="Single-File Architecture" /></a>
+  <img src="https://img.shields.io/badge/Offline--First-100%25%20Client--Side-0284c7?style=for-the-badge" alt="100% Client-Side" />
+  <img src="https://img.shields.io/badge/Stack-Vue%203%20%7C%20Tailwind%20%7C%20Chart.js-334155?style=for-the-badge" alt="Tech Stack" />
+  <img src="https://img.shields.io/badge/License-MIT-f59e0b?style=for-the-badge" alt="MIT License" />
+</p>
+
+<p align="center">
   <img src="assets/screenshots/hero-theme-split-showcase.png" alt="PeopleCore Enterprise HRIS Sandbox & Academy" width="100%" />
 </p>
 
@@ -108,6 +116,24 @@ PeopleCore requires **zero installation, zero dependencies, and no backend serve
 3. **Start Practicing**: Explore real HR operations, run payroll simulations, test hiring workflows, and complete the 10 learning modules right away.
 
 You can also view the full product showcase and curriculum overview in [`index.html`](index.html).
+
+---
+
+## Repository Topics & Search Engine Optimization (SEO)
+
+To maximize discoverability, search engine indexing, and developer navigation across GitHub and web search engines, PeopleCore includes structured metadata, crawler directives, and semantic taxonomy:
+
+### GitHub Repository Topics
+```
+hris, human-resources, payroll-simulator, ats-pipeline, applicant-tracking-system, workforce-management, org-design, position-management, flsa-compliance, bradford-factor, statutory-payroll, gross-to-net, vue3, single-file-app, offline-first, enterprise-software, edtech, hr-certification, interactive-simulator, schema-validation
+```
+
+### Search Engine Directives & Structured Data
+* **Canonical Host**: [`https://nitishkashyapr.github.io/peoplecore-hris-sandbox/`](https://nitishkashyapr.github.io/peoplecore-hris-sandbox/)
+* **Crawler Discovery**: Root [`robots.txt`](robots.txt) allowing universal crawl access and pointing to [`sitemap.xml`](sitemap.xml).
+* **XML Sitemap**: Canonical [`sitemap.xml`](sitemap.xml) with `<changefreq>` and `<priority>` weights for both the showcase landing portal and the full interactive simulator engine.
+* **Open Graph & Twitter Cards**: High-resolution rich preview cards (`2880x1800` split light/dark UI showcase) embedded across all pages.
+* **Schema.org JSON-LD**: Linked Data definitions for `WebSite`, `WebApplication`, and `Course` providing search engines with rich snippet capability.
 
 ---
 
