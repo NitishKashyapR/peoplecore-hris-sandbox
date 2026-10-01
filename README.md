@@ -125,7 +125,7 @@ To maximize discoverability, search engine indexing, and developer navigation ac
 
 ### GitHub Repository Topics
 ```
-hris, human-resources, payroll-simulator, ats-pipeline, applicant-tracking-system, workforce-management, org-design, position-management, flsa-compliance, bradford-factor, statutory-payroll, gross-to-net, vue3, single-file-app, offline-first, enterprise-software, edtech, hr-certification, interactive-simulator, schema-validation
+hris, hris-software, human-resources, payroll-simulator, statutory-payroll, ats-pipeline, applicant-tracking-system, workforce-management, workforce-academy, org-design, position-management, flsa-compliance, bradford-factor, single-file-app, offline-first, vue3, tailwind-css, enterprise-software, interactive-simulator, hr-certification
 ```
 
 ### Search Engine Directives & Structured Data
