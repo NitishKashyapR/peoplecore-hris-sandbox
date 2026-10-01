@@ -1,11 +1,12 @@
 # PeopleCore — Workforce Academy & Enterprise HRIS Sandbox
 
 <p align="center">
-  <a href="https://nitishkashyapr.github.io/peoplecore-hris-sandbox/"><img src="https://img.shields.io/badge/Demo-Live%20Showcase-4f46e5?style=for-the-badge&logo=googlechrome&logoColor=white" alt="Live Demo" /></a>
-  <a href="peoplecore-hris-sandbox.html"><img src="https://img.shields.io/badge/Architecture-Single--File%20App-047857?style=for-the-badge" alt="Single-File Architecture" /></a>
-  <img src="https://img.shields.io/badge/Offline--First-100%25%20Client--Side-0284c7?style=for-the-badge" alt="100% Client-Side" />
-  <img src="https://img.shields.io/badge/Stack-Vue%203%20%7C%20Tailwind%20%7C%20Chart.js-334155?style=for-the-badge" alt="Tech Stack" />
-  <img src="https://img.shields.io/badge/License-MIT-f59e0b?style=for-the-badge" alt="MIT License" />
+  <a href="https://nitishkashyapr.github.io/peoplecore-hris-sandbox/"><img src="https://img.shields.io/badge/Live%20Simulator-Open%20in%20Browser-4f46e5?style=for-the-badge&logo=googlechrome&logoColor=white" alt="Open in Browser" /></a>
+  <a href="peoplecore-hris-sandbox.html"><img src="https://img.shields.io/badge/Interactive%20Sandbox-Zero%20Install-047857?style=for-the-badge" alt="Zero Install" /></a>
+  <img src="https://img.shields.io/badge/Offline--Ready-100%25%20Client--Side-0284c7?style=for-the-badge" alt="Runs Offline" />
+  <img src="https://img.shields.io/badge/Academy-10%20Modules%20%2B%20Audio-6366f1?style=for-the-badge" alt="10 Learning Modules with Audio" />
+  <img src="https://img.shields.io/badge/Credential-Verified%20Certificate-10b981?style=for-the-badge" alt="Verified Certificate" />
+  <img src="https://img.shields.io/badge/License-Free%20MIT-f59e0b?style=for-the-badge" alt="Free Open Source" />
 </p>
 
 <p align="center">
@@ -116,24 +117,6 @@ PeopleCore requires **zero installation, zero dependencies, and no backend serve
 3. **Start Practicing**: Explore real HR operations, run payroll simulations, test hiring workflows, and complete the 10 learning modules right away.
 
 You can also view the full product showcase and curriculum overview in [`index.html`](index.html).
-
----
-
-## Repository Topics & Search Engine Optimization (SEO)
-
-To maximize discoverability, search engine indexing, and developer navigation across GitHub and web search engines, PeopleCore includes structured metadata, crawler directives, and semantic taxonomy:
-
-### GitHub Repository Topics
-```
-hris, hris-software, human-resources, payroll-simulator, statutory-payroll, ats-pipeline, applicant-tracking-system, workforce-management, workforce-academy, org-design, position-management, flsa-compliance, bradford-factor, single-file-app, offline-first, vue3, tailwind-css, enterprise-software, interactive-simulator, hr-certification
-```
-
-### Search Engine Directives & Structured Data
-* **Canonical Host**: [`https://nitishkashyapr.github.io/peoplecore-hris-sandbox/`](https://nitishkashyapr.github.io/peoplecore-hris-sandbox/)
-* **Crawler Discovery**: Root [`robots.txt`](robots.txt) allowing universal crawl access and pointing to [`sitemap.xml`](sitemap.xml).
-* **XML Sitemap**: Canonical [`sitemap.xml`](sitemap.xml) with `<changefreq>` and `<priority>` weights for both the showcase landing portal and the full interactive simulator engine.
-* **Open Graph & Twitter Cards**: High-resolution rich preview cards (`2880x1800` split light/dark UI showcase) embedded across all pages.
-* **Schema.org JSON-LD**: Linked Data definitions for `WebSite`, `WebApplication`, and `Course` providing search engines with rich snippet capability.
 
 ---
 
