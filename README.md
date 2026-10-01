@@ -101,22 +101,13 @@ Learners who complete the curriculum can take the 100-question practical examina
 
 ## Getting Started
 
-PeopleCore can be accessed directly or run locally using any standard static server:
+PeopleCore requires **zero installation, zero dependencies, and no backend server**. It runs immediately in any modern web browser:
 
-* **Product Showcase & Academy Overview**: [`index.html`](index.html)
-* **Interactive HRIS Simulation Engine & Academy**: [`peoplecore-hris-sandbox.html`](peoplecore-hris-sandbox.html)
+1. **Download**: Save [`peoplecore-hris-sandbox.html`](peoplecore-hris-sandbox.html) to your computer.
+2. **Open**: Double-click the downloaded file (or open it with Chrome, Firefox, Safari, or Edge).
+3. **Start Practicing**: Explore real HR operations, run payroll simulations, test hiring workflows, and complete the 10 learning modules right away.
 
-### Running Locally
-
-```bash
-# Using Python
-python -m http.server 8000
-
-# Or using Node.js
-npx serve .
-```
-
-You can also open [`index.html`](index.html) or [`peoplecore-hris-sandbox.html`](peoplecore-hris-sandbox.html) directly in any modern web browser.
+You can also view the full product showcase and curriculum overview in [`index.html`](index.html).
 
 ---
 
