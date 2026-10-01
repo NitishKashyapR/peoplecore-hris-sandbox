@@ -666,47 +666,65 @@
                 <svg class="ic w-4 h-4 text-indigo-600"><use href="#i-layers"></use></svg>
                 <h2 class="text-[13px] font-bold text-slate-800 uppercase tracking-wider">D — Data Exchange &amp; Architecture Guide</h2>
               </div>
-              <div class="p-5 grid md:grid-cols-3 gap-3">
-                <div class="rounded-xl border border-slate-200 p-4">
-                  <div class="flex items-center gap-2 mb-2">
-                    <span class="w-7 h-7 rounded-lg bg-sky-50 text-sky-600 grid place-items-center shrink-0"><svg class="ic w-4 h-4"><use href="#i-file"></use></svg></span>
-                    <div class="lbl">Tabular roster ingestion (.csv)</div>
+              <div class="p-5 space-y-3">
+                <div class="grid md:grid-cols-3 gap-3">
+                  <div class="rounded-xl border border-slate-200 p-4">
+                    <div class="flex items-center gap-2 mb-2">
+                      <span class="w-7 h-7 rounded-lg bg-sky-50 text-sky-600 grid place-items-center shrink-0"><svg class="ic w-4 h-4"><use href="#i-file"></use></svg></span>
+                      <div class="lbl">Tabular roster ingestion (.csv)</div>
+                    </div>
+                    <p class="text-[12.5px] text-slate-600 leading-relaxed">
+                      CSV files drive bulk employee onboarding and batch updates. Standard columns —
+                      <span class="mono text-slate-800">name</span>, <span class="mono text-slate-800">email</span>,
+                      <span class="mono text-slate-800">role</span>, <span class="mono text-slate-800">department</span>,
+                      <span class="mono text-slate-800">salary</span> and <span class="mono text-slate-800">status</span> —
+                      are mapped straight onto worker records, so a whole cohort or a department-wide correction is
+                      applied in one pass instead of one manual entry at a time. Every row is previewed and validated
+                      before it is committed to the directory.
+                    </p>
                   </div>
-                  <p class="text-[12.5px] text-slate-600 leading-relaxed">
-                    CSV files drive bulk employee onboarding and batch updates. Standard columns —
-                    <span class="mono text-slate-800">name</span>, <span class="mono text-slate-800">email</span>,
-                    <span class="mono text-slate-800">role</span>, <span class="mono text-slate-800">department</span>,
-                    <span class="mono text-slate-800">salary</span> and <span class="mono text-slate-800">status</span> —
-                    are mapped straight onto worker records, so a whole cohort or a department-wide correction is
-                    applied in one pass instead of one manual entry at a time. Every row is previewed and validated
-                    before it is committed to the directory.
-                  </p>
+                  <div class="rounded-xl border border-slate-200 p-4">
+                    <div class="flex items-center gap-2 mb-2">
+                      <span class="w-7 h-7 rounded-lg bg-violet-50 text-violet-600 grid place-items-center shrink-0"><svg class="ic w-4 h-4"><use href="#i-db"></use></svg></span>
+                      <div class="lbl">Enterprise state snapshots (.json)</div>
+                    </div>
+                    <p class="text-[12.5px] text-slate-600 leading-relaxed">
+                      A JSON snapshot exports the complete sandbox environment — employee profiles, compensation
+                      tables, org trees, payroll registers and the immutable audit log — as a single portable
+                      document. Restore that document to return the platform to an exact earlier state, switch
+                      between prepared scenarios, or migrate the whole dataset to another machine. Snapshots are
+                      the supported route for backup, rehearsal and offline hand-over.
+                    </p>
+                  </div>
+                  <div class="rounded-xl border border-slate-200 p-4">
+                    <div class="flex items-center gap-2 mb-2">
+                      <span class="w-7 h-7 rounded-lg bg-emerald-50 text-emerald-600 grid place-items-center shrink-0"><svg class="ic w-4 h-4"><use href="#i-shield"></use></svg></span>
+                      <div class="lbl">Local-first privacy &amp; zero-cloud architecture</div>
+                    </div>
+                    <p class="text-[12.5px] text-slate-600 leading-relaxed">
+                      Every simulation record, payroll calculation and compliance test runs 100% in-browser against
+                      this origin's local storage. There is no account, no API call and no telemetry channel: no
+                      employee data, compensation figure or corporate record ever leaves the device. Closing the tab
+                      ends the session, and section E below can re-initialise the dataset whenever you want a clean
+                      starting point.
+                    </p>
+                  </div>
                 </div>
-                <div class="rounded-xl border border-slate-200 p-4">
-                  <div class="flex items-center gap-2 mb-2">
-                    <span class="w-7 h-7 rounded-lg bg-violet-50 text-violet-600 grid place-items-center shrink-0"><svg class="ic w-4 h-4"><use href="#i-db"></use></svg></span>
-                    <div class="lbl">Enterprise state snapshots (.json)</div>
+
+                <!-- Guardrails & Safety Banner -->
+                <div class="rounded-xl border border-indigo-200 bg-indigo-50/60 p-4 flex items-start gap-3">
+                  <span class="w-8 h-8 rounded-lg bg-indigo-600 text-white grid place-items-center shrink-0 mt-0.5">
+                    <svg class="ic w-4 h-4"><use href="#i-shield-check"></use></svg>
+                  </span>
+                  <div>
+                    <div class="text-[12.5px] font-bold text-indigo-950 flex items-center gap-2">
+                      <span>File Guardrails &amp; Safety</span>
+                      <span class="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-indigo-200/60 text-indigo-800 border border-indigo-300">Sanitized Ingestion</span>
+                    </div>
+                    <p class="text-[12px] text-indigo-900/90 leading-relaxed mt-1">
+                      File Guardrails &amp; Safety: Ingestion pipelines enforce a strict 2 MB payload ceiling, a 500-record cohort limit, and automatic character neutralization (disarming spreadsheet formula prefixes and stripping HTML tags) to guarantee safe in-browser state isolation.
+                    </p>
                   </div>
-                  <p class="text-[12.5px] text-slate-600 leading-relaxed">
-                    A JSON snapshot exports the complete sandbox environment — employee profiles, compensation
-                    tables, org trees, payroll registers and the immutable audit log — as a single portable
-                    document. Restore that document to return the platform to an exact earlier state, switch
-                    between prepared scenarios, or migrate the whole dataset to another machine. Snapshots are
-                    the supported route for backup, rehearsal and offline hand-over.
-                  </p>
-                </div>
-                <div class="rounded-xl border border-slate-200 p-4">
-                  <div class="flex items-center gap-2 mb-2">
-                    <span class="w-7 h-7 rounded-lg bg-emerald-50 text-emerald-600 grid place-items-center shrink-0"><svg class="ic w-4 h-4"><use href="#i-shield"></use></svg></span>
-                    <div class="lbl">Local-first privacy &amp; zero-cloud architecture</div>
-                  </div>
-                  <p class="text-[12.5px] text-slate-600 leading-relaxed">
-                    Every simulation record, payroll calculation and compliance test runs 100% in-browser against
-                    this origin's local storage. There is no account, no API call and no telemetry channel: no
-                    employee data, compensation figure or corporate record ever leaves the device. Closing the tab
-                    ends the session, and section E below can re-initialise the dataset whenever you want a clean
-                    starting point.
-                  </p>
                 </div>
               </div>
             </section>
@@ -4084,6 +4102,19 @@
                   </label>
                   <button @click="downloadTemplate" class="h-8 px-3.5 rounded-lg border border-slate-300 bg-white text-slate-600 text-xs font-semibold hover:bg-slate-100">Download sample template</button>
                 </div>
+                <!-- Parameter helper pill & security assurance -->
+                <div class="mt-4 pt-3.5 border-t border-slate-200/80 max-w-xl mx-auto space-y-2">
+                  <div>
+                    <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white border border-slate-200 text-slate-700 text-[11px] font-medium shadow-2xs">
+                      <svg class="ic w-3.5 h-3.5 text-indigo-600 shrink-0"><use href="#i-shield-check"></use></svg>
+                      <span>Accepted formats: .csv, .json • Max file size: 2 MB • Max cohort limit: 500 records per upload.</span>
+                    </span>
+                  </div>
+                  <p class="text-[11px] text-slate-600 flex items-center justify-center gap-1.5">
+                    <svg class="ic w-3.5 h-3.5 text-emerald-600 shrink-0"><use href="#i-lock"></use></svg>
+                    <span>Client-side processing only: Data is sanitized against formula injection and script execution before entering local state.</span>
+                  </p>
+                </div>
               </div>
 
               <!-- Import preview & validation (CSV) -->
@@ -4967,8 +4998,64 @@ function formatLongDate(iso) {
     return new Intl.DateTimeFormat('en-US', { year: 'numeric', month: 'long', day: 'numeric' }).format(d);
   } catch (err) { return iso; }
 }
+/* ------------------------------------------------------------- Ingestion sanitization guardrails & limits */
+var MAX_INGEST_FILE_BYTES = 2 * 1024 * 1024; // 2 MB ceiling
+var MAX_INGEST_RECORDS = 500; // 500 records cohort limit
+
+function stripHtmlTags(str) {
+  if (typeof str !== 'string') return str;
+  return str
+    .replace(new RegExp('<' + 'script\\b[^>]*>([\\s\\S]*?)<\\/' + 'script>', 'gim'), '')
+    .replace(new RegExp('<' + 'iframe\\b[^>]*>([\\s\\S]*?)<\\/' + 'iframe>', 'gim'), '')
+    .replace(new RegExp('<' + 'style\\b[^>]*>([\\s\\S]*?)<\\/' + 'style>', 'gim'), '')
+    .replace(/<[^>]+>/g, '');
+}
+
+function disarmFormulaInjection(str) {
+  if (typeof str !== 'string') return str;
+  var trimmed = str.trim();
+  if (trimmed.length > 0) {
+    var c = trimmed.charAt(0);
+    if (c === '=' || c === '+' || c === '-' || c === '@') {
+      if (!str.startsWith("'")) {
+        return "'" + str;
+      }
+    }
+  }
+  return str;
+}
+
+function sanitizeField(val) {
+  if (val === null || val === undefined) return '';
+  if (typeof val !== 'string') return val;
+  var clean = stripHtmlTags(val);
+  clean = disarmFormulaInjection(clean);
+  return clean;
+}
+
+function sanitizeDeep(val) {
+  if (val === null || val === undefined) return val;
+  if (typeof val === 'string') return sanitizeField(val);
+  if (Array.isArray(val)) {
+    return val.map(function (item) { return sanitizeDeep(item); });
+  }
+  if (typeof val === 'object') {
+    var res = {};
+    for (var k in val) {
+      if (Object.prototype.hasOwnProperty.call(val, k)) {
+        res[k] = sanitizeDeep(val[k]);
+      }
+    }
+    return res;
+  }
+  return val;
+}
+
 function csvCell(v) {
   var s = (v === null || v === undefined) ? '' : String(v);
+  if (/^[=+\-@]/.test(s.trim()) && !s.startsWith("'")) {
+    s = "'" + s;
+  }
   return /[",\n]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s;
 }
 function toCSV(headers, rows) {
@@ -4995,7 +5082,7 @@ function parseCSV(text) {
     return r.some(function (c2) { return String(c2).trim() !== ''; });
   }).map(function (r) {
     var o = {};
-    headers.forEach(function (h, i2) { o[h] = (r[i2] || '').trim(); });
+    headers.forEach(function (h, i2) { o[h] = sanitizeField((r[i2] || '').trim()); });
     return o;
   });
   return { headers: headers, rows: objs };
@@ -8044,8 +8131,9 @@ var App = {
     submitOnboard: function () {
       if (!this.can('hire')) { this.toast('error', 'Your role cannot create employee records.'); return; }
       var f = this.onboardForm;
-      var name = String(f.name || '').trim();
-      var email = String(f.workEmail || '').trim().toLowerCase();
+      var name = sanitizeField(String(f.name || '')).trim();
+      var email = sanitizeField(String(f.workEmail || '')).trim().toLowerCase();
+      var title = sanitizeField(String(f.title || '')).trim() || 'New Team Member';
       if (name.length < 3) {
         this.onboardErr = 'Full legal name is required — enter the name exactly as it should appear on the record.';
         this.toast('error', 'Full legal name is required.'); return;
@@ -8079,14 +8167,14 @@ var App = {
       var prof = JUR_PROFILE[jur];
       var w = buildWorker({
         id: id, n: name,
-        t: String(f.title || '').trim() || 'New Team Member',
+        t: title,
         d: f.department, cc: this.deptCC(f.department),
         m: f.managerId || null,
         start: f.startDate || isoDate(new Date()),
         type: f.employmentType, sal: salary, band: f.band,
         loc: prof.loc, tz: prof.tz
       }, this.db.employees.length);
-      w.workEmail = String(f.workEmail || '').trim();
+      w.workEmail = email;
       w.personalEmail = '';
       w.jurisdiction = jur;
       w.leave = initialLeave(jur);
@@ -8806,6 +8894,9 @@ var App = {
     },
     previewSnapshot: function (text, fileName, fileSize) {
       var data, fatal = [];
+      if (text && text.length > MAX_INGEST_FILE_BYTES) {
+        fatal.push('Payload exceeds the 2 MB security threshold (' + (text.length / (1024 * 1024)).toFixed(2) + ' MB). Maximum allowed is 2 MB.');
+      }
       try {
         data = JSON.parse(text);
       } catch (err) {
@@ -8833,7 +8924,12 @@ var App = {
       if (state && !fatal.length) {
         if (!Array.isArray(state.employees) || !state.employees.length) {
           fatal.push('Missing or empty "employees" array: at least one employee record is required.');
+        } else if (state.employees.length > MAX_INGEST_RECORDS) {
+          fatal.push('Snapshot exceeds the 500-record cohort limit (contains ' + state.employees.length + ' employee records). Maximum allowed is 500 records per upload.');
         }
+      }
+      if (state && !fatal.length) {
+        state = sanitizeDeep(state);
       }
       var incomingCounts = {
         employees: (state && Array.isArray(state.employees)) ? state.employees.length : 0,
@@ -8928,9 +9024,42 @@ var App = {
       if (file) this.handleIngestFile(file);
     },
     handleIngestFile: function (file) {
+      if (!file) return;
       var name = (file.name || '').toLowerCase();
       var type = (file.type || '').toLowerCase();
-      if (name.endsWith('.json') || type === 'application/json') {
+      var isJson = name.endsWith('.json') || type === 'application/json';
+
+      // File Size Enforcement: reject any file exceeding 2 MB
+      if (file.size && file.size > MAX_INGEST_FILE_BYTES) {
+        var sizeMb = (file.size / (1024 * 1024)).toFixed(2);
+        var msg = 'Upload rejected: File size (' + sizeMb + ' MB) exceeds the 2 MB security threshold.';
+        this.toast('error', msg);
+        if (isJson) {
+          this.importPreview = null;
+          this.snapshotPreview = {
+            fileName: file.name || 'snapshot.json',
+            fileSize: sizeMb + ' MB',
+            exportedAt: null,
+            rawState: null,
+            incomingCounts: { employees: 0, positions: 0, requisitions: 0, candidates: 0, audit: 0 },
+            currentCounts: { employees: this.db.employees.length, positions: this.db.positions.length, requisitions: this.db.requisitions.length, candidates: this.db.candidates.length, audit: this.db.audit.length },
+            fatal: [msg]
+          };
+        } else {
+          this.snapshotPreview = null;
+          this.importPreview = {
+            fileName: file.name || 'roster.csv',
+            headers: [],
+            rows: [],
+            valid: [],
+            errors: [],
+            fatal: [msg]
+          };
+        }
+        return;
+      }
+
+      if (isJson) {
         this.readJSON(file);
       } else {
         this.readCSV(file);
@@ -8945,13 +9074,19 @@ var App = {
     },
     previewCSV: function (text, fileName) {
       var self = this;
+      var fatal = [], errors = [], valid = [];
+      if (text && text.length > MAX_INGEST_FILE_BYTES) {
+        fatal.push('Payload exceeds the 2 MB security threshold (' + (text.length / (1024 * 1024)).toFixed(2) + ' MB). Maximum allowed is 2 MB.');
+      }
       var parsed = parseCSV(text);
       var headers = parsed.headers, rows = parsed.rows;
-      var fatal = [], errors = [], valid = [];
+      if (rows.length > MAX_INGEST_RECORDS) {
+        fatal.push('Dataset exceeds the 500-record cohort limit (contains ' + rows.length + ' rows). Maximum allowed is 500 records per upload.');
+      }
       ['name', 'email', 'role'].forEach(function (h) {
         if (headers.indexOf(h) < 0) fatal.push('Missing required column: ' + h);
       });
-      if (!rows.length) fatal.push('File contains no data rows after the header line.');
+      if (!rows.length && !fatal.length) fatal.push('File contains no data rows after the header line.');
       var seen = {};
       rows.forEach(function (r, i) {
         var rowNo = i + 2;
@@ -8970,7 +9105,7 @@ var App = {
         valid.push(r);
       });
       this.importPreview = { fileName: fileName, headers: headers, rows: rows, valid: valid, errors: errors, fatal: fatal };
-      if (fatal.length) this.toast('error', 'File rejected — fix the structural conflicts.');
+      if (fatal.length) this.toast('error', 'File rejected: ' + fatal[0]);
       else this.toast('warn', valid.length + ' row(s) valid, ' + errors.length + ' rejected.');
     },
     commitImport: function () {
