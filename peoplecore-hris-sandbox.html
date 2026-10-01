@@ -1055,8 +1055,11 @@
                   <svg class="ic w-3.5 h-3.5"><use href="#i-list"></use></svg> Table
                 </button>
               </div>
-              <button v-if="can('hire')" @click="openOnboard" class="h-8 px-3 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold flex items-center gap-1.5 transition">
-                <svg class="ic w-3.5 h-3.5"><use href="#i-user-plus"></use></svg> Add Employee
+              <button v-if="can('hire')" @click="openOnboard" class="h-8 px-3 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold flex items-center gap-1.5 transition shadow-sm">
+                <svg class="ic w-3.5 h-3.5"><use href="#i-user-plus"></use></svg> + Add Employee (Manual Entry)
+              </button>
+              <button @click="openMassImport" class="h-8 px-3 rounded-lg border border-indigo-200 bg-indigo-50/70 hover:bg-indigo-100 text-indigo-700 text-xs font-semibold flex items-center gap-1.5 transition">
+                <svg class="ic w-3.5 h-3.5"><use href="#i-upload"></use></svg> Mass Import (CSV / JSON)
               </button>
               <button @click="exportDirectoryCSV" class="h-8 px-3 rounded-lg border border-slate-300 bg-white text-slate-600 text-xs font-semibold hover:bg-slate-50 flex items-center gap-1.5">
                 <svg class="ic w-3.5 h-3.5"><use href="#i-download"></use></svg> Export CSV
@@ -1070,6 +1073,32 @@
 
           <!-- PEOPLE VIEW -->
           <template v-if="dirView==='people'">
+            <!-- Dual-Mode Ingestion Helper Banner -->
+            <div class="bg-gradient-to-r from-slate-900 to-indigo-950 text-white rounded-xl p-3 sm:p-4 mb-4 flex flex-wrap items-center justify-between gap-3 shadow-sm no-print border border-indigo-900/40">
+              <div class="flex items-center gap-3">
+                <span class="w-8 h-8 rounded-lg bg-indigo-500/20 border border-indigo-400/30 text-indigo-300 grid place-items-center shrink-0">
+                  <svg class="ic w-4 h-4"><use href="#i-user-plus"></use></svg>
+                </span>
+                <div>
+                  <div class="text-xs font-bold text-white flex items-center gap-2">
+                    <span>WORKFORCE INGESTION PIPELINE</span>
+                    <span class="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-indigo-500/30 text-indigo-200 border border-indigo-400/30">Dual Mode</span>
+                  </div>
+                  <p class="text-xs text-slate-300 mt-0.5">
+                    Add workers individually via form validation, or batch-load cohorts via CSV roster / JSON backup.
+                  </p>
+                </div>
+              </div>
+              <div class="flex items-center gap-2">
+                <button v-if="can('hire')" @click="openOnboard" class="h-7 px-3 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold flex items-center gap-1.5 transition">
+                  <svg class="ic w-3 h-3"><use href="#i-user-plus"></use></svg> Single Entry
+                </button>
+                <button @click="openMassImport" class="h-7 px-3 rounded-lg bg-white/10 hover:bg-white/20 border border-white/20 text-white text-xs font-semibold flex items-center gap-1.5 transition">
+                  <svg class="ic w-3 h-3"><use href="#i-upload"></use></svg> Batch Import
+                </button>
+              </div>
+            </div>
+
             <!-- Filters -->
             <div class="bg-white border border-slate-200 rounded-xl p-3 mb-4 flex flex-wrap gap-2.5 items-center no-print">
               <div class="relative flex-1 min-w-[220px]">
@@ -4046,18 +4075,18 @@
                 :class="hubDrag ? 'border-indigo-500 bg-indigo-50' : 'border-slate-300 bg-slate-50'"
                 class="border-2 border-dashed rounded-xl p-8 text-center transition">
                 <svg class="ic w-8 h-8 mx-auto mb-2" :class="hubDrag ? 'text-indigo-500' : 'text-slate-400'"><use href="#i-upload"></use></svg>
-                <p class="text-sm font-semibold text-slate-700">Drag &amp; drop an Employee Master CSV</p>
-                <p class="text-xs text-slate-500 mt-1 mb-3">Required columns: <span class="mono">name</span>, <span class="mono">email</span>, <span class="mono">role</span></p>
+                <p class="text-sm font-semibold text-slate-700">Drag &amp; drop an Employee Master CSV or JSON Snapshot</p>
+                <p class="text-xs text-slate-500 mt-1 mb-3">Accepts <span class="mono">.csv</span> tabular rosters or <span class="mono">.json</span> state snapshots</p>
                 <div class="flex items-center justify-center gap-2">
                   <label class="h-8 px-3.5 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold flex items-center gap-1.5 cursor-pointer">
                     <svg class="ic w-3.5 h-3.5"><use href="#i-file"></use></svg>Choose file
-                    <input type="file" accept=".csv,text/csv" class="hidden" @change="onCSVFile"/>
+                    <input type="file" accept=".csv,text/csv,application/json,.json" class="hidden" @change="onCSVFile"/>
                   </label>
                   <button @click="downloadTemplate" class="h-8 px-3.5 rounded-lg border border-slate-300 bg-white text-slate-600 text-xs font-semibold hover:bg-slate-100">Download sample template</button>
                 </div>
               </div>
 
-              <!-- Import preview & validation -->
+              <!-- Import preview & validation (CSV) -->
               <div v-if="importPreview" class="mt-4">
                 <div class="grid grid-cols-3 gap-3 mb-3">
                   <div class="rounded-xl border border-slate-200 p-3 text-center"><div class="text-xl font-bold text-slate-800 mono">{{ importPreview.rows.length }}</div><div class="text-[10px] lbl">Rows parsed</div></div>
@@ -4087,6 +4116,138 @@
                 <div class="flex justify-end gap-2 mt-4">
                   <button @click="importPreview=null" class="h-9 px-4 rounded-lg border border-slate-300 text-slate-600 text-sm font-semibold hover:bg-slate-50">Discard</button>
                   <button @click="commitImport" :disabled="!importPreview.valid.length || importPreview.fatal.length" class="h-9 px-4 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold disabled:opacity-40">Commit {{ importPreview.valid.length }} row(s) to live state</button>
+                </div>
+              </div>
+
+              <!-- Snapshot preview & diff validation (JSON) -->
+              <div v-if="snapshotPreview" class="mt-4 rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
+                <div class="flex flex-wrap items-center justify-between gap-2 pb-3 border-b border-slate-100">
+                  <div class="flex items-center gap-2.5">
+                    <span class="w-8 h-8 rounded-lg bg-violet-100 text-violet-700 grid place-items-center">
+                      <svg class="ic w-4 h-4"><use href="#i-db"></use></svg>
+                    </span>
+                    <div>
+                      <h4 class="text-sm font-bold text-slate-800 flex items-center gap-2">
+                        <span>Enterprise State Snapshot</span>
+                        <span class="text-[10px] mono px-2 py-0.5 rounded-full bg-slate-100 text-slate-600 border border-slate-200">{{ snapshotPreview.fileName }}</span>
+                      </h4>
+                      <p class="text-[11px] text-slate-500 mt-0.5">
+                        Payload size: {{ snapshotPreview.fileSize }}
+                        <span v-if="snapshotPreview.exportedAt"> · Exported: {{ snapshotPreview.exportedAt }}</span>
+                      </p>
+                    </div>
+                  </div>
+                  <span :class="snapshotPreview.fatal.length ? 'bg-rose-100 text-rose-700 border-rose-200' : 'bg-emerald-100 text-emerald-700 border-emerald-200'" class="text-[10px] font-bold px-2 py-1 rounded-md border uppercase">
+                    {{ snapshotPreview.fatal.length ? 'Schema Conflict' : 'Valid Snapshot' }}
+                  </span>
+                </div>
+
+                <!-- Fatal errors if any -->
+                <div v-if="snapshotPreview.fatal.length" class="mt-3 rounded-lg border border-rose-300 bg-rose-50 p-3">
+                  <div class="text-xs font-bold text-rose-800 mb-1">Structural validation errors — cannot restore</div>
+                  <ul class="list-disc pl-4 text-[12px] text-rose-700 space-y-0.5">
+                    <li v-for="f in snapshotPreview.fatal" :key="f">{{ f }}</li>
+                  </ul>
+                </div>
+
+                <!-- Diff comparison table -->
+                <div v-else class="mt-3">
+                  <div class="rounded-lg border border-indigo-200 bg-indigo-50/70 p-3 mb-3 text-xs text-indigo-950 flex items-start gap-2">
+                    <svg class="ic w-4 h-4 text-indigo-600 shrink-0 mt-0.5"><use href="#i-help"></use></svg>
+                    <div>
+                      <strong class="font-semibold">Snapshot contains {{ snapshotPreview.incomingCounts.employees }} employees and {{ snapshotPreview.incomingCounts.audit }} audit records.</strong>
+                      <span> Overwrite active database? This will atomically replace in-memory state and commit to browser localStorage.</span>
+                    </div>
+                  </div>
+
+                  <div class="border border-slate-200 rounded-lg overflow-x-auto">
+                    <table class="w-full text-[12px]">
+                      <thead>
+                        <tr class="bg-slate-50 text-slate-500 text-[10px] uppercase tracking-wider">
+                          <th class="text-left font-semibold px-3 py-2">Entity Domain</th>
+                          <th class="text-center font-semibold px-3 py-2">Current Active DB</th>
+                          <th class="text-center font-semibold px-3 py-2">Snapshot Inbound</th>
+                          <th class="text-center font-semibold px-3 py-2">Net Difference</th>
+                        </tr>
+                      </thead>
+                      <tbody class="divide-y divide-slate-100">
+                        <tr class="hover:bg-slate-50">
+                          <td class="px-3 py-2 font-medium text-slate-800 flex items-center gap-1.5">
+                            <svg class="ic w-3.5 h-3.5 text-slate-400"><use href="#i-users"></use></svg> Employee Master Records
+                          </td>
+                          <td class="px-3 py-2 text-center mono text-slate-600">{{ snapshotPreview.currentCounts.employees }}</td>
+                          <td class="px-3 py-2 text-center mono font-bold text-indigo-600">{{ snapshotPreview.incomingCounts.employees }}</td>
+                          <td class="px-3 py-2 text-center">
+                            <span class="text-[11px] mono px-1.5 py-0.5 rounded font-bold"
+                              :class="snapshotPreview.incomingCounts.employees >= snapshotPreview.currentCounts.employees ? 'bg-emerald-100 text-emerald-700' : 'bg-rose-100 text-rose-700'">
+                              {{ (snapshotPreview.incomingCounts.employees - snapshotPreview.currentCounts.employees) >= 0 ? '+' : '' }}{{ snapshotPreview.incomingCounts.employees - snapshotPreview.currentCounts.employees }}
+                            </span>
+                          </td>
+                        </tr>
+                        <tr class="hover:bg-slate-50">
+                          <td class="px-3 py-2 font-medium text-slate-800 flex items-center gap-1.5">
+                            <svg class="ic w-3.5 h-3.5 text-slate-400"><use href="#i-briefcase"></use></svg> Budgeted Positions
+                          </td>
+                          <td class="px-3 py-2 text-center mono text-slate-600">{{ snapshotPreview.currentCounts.positions }}</td>
+                          <td class="px-3 py-2 text-center mono font-bold text-indigo-600">{{ snapshotPreview.incomingCounts.positions }}</td>
+                          <td class="px-3 py-2 text-center">
+                            <span class="text-[11px] mono px-1.5 py-0.5 rounded font-bold"
+                              :class="snapshotPreview.incomingCounts.positions >= snapshotPreview.currentCounts.positions ? 'bg-emerald-100 text-emerald-700' : 'bg-rose-100 text-rose-700'">
+                              {{ (snapshotPreview.incomingCounts.positions - snapshotPreview.currentCounts.positions) >= 0 ? '+' : '' }}{{ snapshotPreview.incomingCounts.positions - snapshotPreview.currentCounts.positions }}
+                            </span>
+                          </td>
+                        </tr>
+                        <tr class="hover:bg-slate-50">
+                          <td class="px-3 py-2 font-medium text-slate-800 flex items-center gap-1.5">
+                            <svg class="ic w-3.5 h-3.5 text-slate-400"><use href="#i-search"></use></svg> Open Requisitions
+                          </td>
+                          <td class="px-3 py-2 text-center mono text-slate-600">{{ snapshotPreview.currentCounts.requisitions }}</td>
+                          <td class="px-3 py-2 text-center mono font-bold text-indigo-600">{{ snapshotPreview.incomingCounts.requisitions }}</td>
+                          <td class="px-3 py-2 text-center">
+                            <span class="text-[11px] mono px-1.5 py-0.5 rounded font-bold"
+                              :class="snapshotPreview.incomingCounts.requisitions >= snapshotPreview.currentCounts.requisitions ? 'bg-emerald-100 text-emerald-700' : 'bg-rose-100 text-rose-700'">
+                              {{ (snapshotPreview.incomingCounts.requisitions - snapshotPreview.currentCounts.requisitions) >= 0 ? '+' : '' }}{{ snapshotPreview.incomingCounts.requisitions - snapshotPreview.currentCounts.requisitions }}
+                            </span>
+                          </td>
+                        </tr>
+                        <tr class="hover:bg-slate-50">
+                          <td class="px-3 py-2 font-medium text-slate-800 flex items-center gap-1.5">
+                            <svg class="ic w-3.5 h-3.5 text-slate-400"><use href="#i-users"></use></svg> Candidates in Pipeline
+                          </td>
+                          <td class="px-3 py-2 text-center mono text-slate-600">{{ snapshotPreview.currentCounts.candidates }}</td>
+                          <td class="px-3 py-2 text-center mono font-bold text-indigo-600">{{ snapshotPreview.incomingCounts.candidates }}</td>
+                          <td class="px-3 py-2 text-center">
+                            <span class="text-[11px] mono px-1.5 py-0.5 rounded font-bold"
+                              :class="snapshotPreview.incomingCounts.candidates >= snapshotPreview.currentCounts.candidates ? 'bg-emerald-100 text-emerald-700' : 'bg-rose-100 text-rose-700'">
+                              {{ (snapshotPreview.incomingCounts.candidates - snapshotPreview.currentCounts.candidates) >= 0 ? '+' : '' }}{{ snapshotPreview.incomingCounts.candidates - snapshotPreview.currentCounts.candidates }}
+                            </span>
+                          </td>
+                        </tr>
+                        <tr class="hover:bg-slate-50">
+                          <td class="px-3 py-2 font-medium text-slate-800 flex items-center gap-1.5">
+                            <svg class="ic w-3.5 h-3.5 text-slate-400"><use href="#i-shield"></use></svg> Audit Ledger Events
+                          </td>
+                          <td class="px-3 py-2 text-center mono text-slate-600">{{ snapshotPreview.currentCounts.audit }}</td>
+                          <td class="px-3 py-2 text-center mono font-bold text-indigo-600">{{ snapshotPreview.incomingCounts.audit }}</td>
+                          <td class="px-3 py-2 text-center">
+                            <span class="text-[11px] mono px-1.5 py-0.5 rounded font-bold"
+                              :class="snapshotPreview.incomingCounts.audit >= snapshotPreview.currentCounts.audit ? 'bg-emerald-100 text-emerald-700' : 'bg-rose-100 text-rose-700'">
+                              {{ (snapshotPreview.incomingCounts.audit - snapshotPreview.currentCounts.audit) >= 0 ? '+' : '' }}{{ snapshotPreview.incomingCounts.audit - snapshotPreview.currentCounts.audit }}
+                            </span>
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+
+                <div class="flex items-center justify-end gap-2 mt-4 pt-3 border-t border-slate-100">
+                  <button @click="snapshotPreview=null" class="h-9 px-4 rounded-lg border border-slate-300 text-slate-600 text-xs font-semibold hover:bg-slate-50">
+                    Discard
+                  </button>
+                  <button @click="commitSnapshotRestore" :disabled="snapshotPreview.fatal.length > 0" class="h-9 px-4 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold disabled:opacity-40 flex items-center gap-1.5 shadow-sm">
+                    <svg class="ic w-3.5 h-3.5"><use href="#i-check"></use></svg> Confirm &amp; Overwrite Active Database
+                  </button>
                 </div>
               </div>
             </template>
@@ -4122,7 +4283,7 @@
 
           <!-- SNAPSHOT -->
           <div v-else-if="hubTab==='snapshot'">
-            <div class="grid sm:grid-cols-2 gap-4">
+            <div class="grid sm:grid-cols-2 gap-4 mb-4">
               <div class="rounded-xl border border-slate-200 p-4">
                 <span class="w-10 h-10 rounded-lg bg-sky-50 text-sky-600 grid place-items-center mb-3"><svg class="ic w-5 h-5"><use href="#i-download"></use></svg></span>
                 <h3 class="text-sm font-semibold text-slate-800 mb-1">Export state snapshot</h3>
@@ -4139,6 +4300,152 @@
                 </label>
               </div>
             </div>
+
+            <!-- JSON Snapshot Drop Zone -->
+            <div @dragover.prevent="hubDrag=true" @dragleave="hubDrag=false" @drop.prevent="onDropSnapshot"
+              :class="hubDrag ? 'border-amber-500 bg-amber-50/50' : 'border-slate-300 bg-slate-50'"
+              class="border-2 border-dashed rounded-xl p-6 text-center transition mb-4">
+              <svg class="ic w-7 h-7 mx-auto mb-1.5" :class="hubDrag ? 'text-amber-500' : 'text-slate-400'"><use href="#i-upload"></use></svg>
+              <p class="text-xs font-semibold text-slate-700">Drag &amp; drop an enterprise state snapshot (.json)</p>
+              <p class="text-[11px] text-slate-500 mt-0.5 mb-2.5">Upload a backup file containing root keys: <span class="mono">employees</span>, <span class="mono">positions</span>, <span class="mono">requisitions</span>, <span class="mono">audit</span></p>
+              <label class="inline-flex h-7 px-3 rounded-lg bg-slate-800 hover:bg-slate-900 text-white text-[11px] font-semibold items-center gap-1.5 cursor-pointer">
+                <svg class="ic w-3 h-3"><use href="#i-file"></use></svg>Browse .json snapshot
+                <input type="file" accept="application/json,.json" class="hidden" @change="onSnapshotFile"/>
+              </label>
+            </div>
+
+            <!-- Snapshot preview & diff validation (JSON) -->
+            <div v-if="snapshotPreview" class="mt-4 mb-4 rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
+              <div class="flex flex-wrap items-center justify-between gap-2 pb-3 border-b border-slate-100">
+                <div class="flex items-center gap-2.5">
+                  <span class="w-8 h-8 rounded-lg bg-violet-100 text-violet-700 grid place-items-center">
+                    <svg class="ic w-4 h-4"><use href="#i-db"></use></svg>
+                  </span>
+                  <div>
+                    <h4 class="text-sm font-bold text-slate-800 flex items-center gap-2">
+                      <span>Enterprise State Snapshot</span>
+                      <span class="text-[10px] mono px-2 py-0.5 rounded-full bg-slate-100 text-slate-600 border border-slate-200">{{ snapshotPreview.fileName }}</span>
+                    </h4>
+                    <p class="text-[11px] text-slate-500 mt-0.5">
+                      Payload size: {{ snapshotPreview.fileSize }}
+                      <span v-if="snapshotPreview.exportedAt"> · Exported: {{ snapshotPreview.exportedAt }}</span>
+                    </p>
+                  </div>
+                </div>
+                <span :class="snapshotPreview.fatal.length ? 'bg-rose-100 text-rose-700 border-rose-200' : 'bg-emerald-100 text-emerald-700 border-emerald-200'" class="text-[10px] font-bold px-2 py-1 rounded-md border uppercase">
+                  {{ snapshotPreview.fatal.length ? 'Schema Conflict' : 'Valid Snapshot' }}
+                </span>
+              </div>
+
+              <!-- Fatal errors if any -->
+              <div v-if="snapshotPreview.fatal.length" class="mt-3 rounded-lg border border-rose-300 bg-rose-50 p-3">
+                <div class="text-xs font-bold text-rose-800 mb-1">Structural validation errors — cannot restore</div>
+                <ul class="list-disc pl-4 text-[12px] text-rose-700 space-y-0.5">
+                  <li v-for="f in snapshotPreview.fatal" :key="f">{{ f }}</li>
+                </ul>
+              </div>
+
+              <!-- Diff comparison table -->
+              <div v-else class="mt-3">
+                <div class="rounded-lg border border-indigo-200 bg-indigo-50/70 p-3 mb-3 text-xs text-indigo-950 flex items-start gap-2">
+                  <svg class="ic w-4 h-4 text-indigo-600 shrink-0 mt-0.5"><use href="#i-help"></use></svg>
+                  <div>
+                    <strong class="font-semibold">Snapshot contains {{ snapshotPreview.incomingCounts.employees }} employees and {{ snapshotPreview.incomingCounts.audit }} audit records.</strong>
+                    <span> Overwrite active database? This will atomically replace in-memory state and commit to browser localStorage.</span>
+                  </div>
+                </div>
+
+                <div class="border border-slate-200 rounded-lg overflow-x-auto">
+                  <table class="w-full text-[12px]">
+                    <thead>
+                      <tr class="bg-slate-50 text-slate-500 text-[10px] uppercase tracking-wider">
+                        <th class="text-left font-semibold px-3 py-2">Entity Domain</th>
+                        <th class="text-center font-semibold px-3 py-2">Current Active DB</th>
+                        <th class="text-center font-semibold px-3 py-2">Snapshot Inbound</th>
+                        <th class="text-center font-semibold px-3 py-2">Net Difference</th>
+                      </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-100">
+                      <tr class="hover:bg-slate-50">
+                        <td class="px-3 py-2 font-medium text-slate-800 flex items-center gap-1.5">
+                          <svg class="ic w-3.5 h-3.5 text-slate-400"><use href="#i-users"></use></svg> Employee Master Records
+                        </td>
+                        <td class="px-3 py-2 text-center mono text-slate-600">{{ snapshotPreview.currentCounts.employees }}</td>
+                        <td class="px-3 py-2 text-center mono font-bold text-indigo-600">{{ snapshotPreview.incomingCounts.employees }}</td>
+                        <td class="px-3 py-2 text-center">
+                          <span class="text-[11px] mono px-1.5 py-0.5 rounded font-bold"
+                            :class="snapshotPreview.incomingCounts.employees >= snapshotPreview.currentCounts.employees ? 'bg-emerald-100 text-emerald-700' : 'bg-rose-100 text-rose-700'">
+                            {{ (snapshotPreview.incomingCounts.employees - snapshotPreview.currentCounts.employees) >= 0 ? '+' : '' }}{{ snapshotPreview.incomingCounts.employees - snapshotPreview.currentCounts.employees }}
+                          </span>
+                        </td>
+                      </tr>
+                      <tr class="hover:bg-slate-50">
+                        <td class="px-3 py-2 font-medium text-slate-800 flex items-center gap-1.5">
+                          <svg class="ic w-3.5 h-3.5 text-slate-400"><use href="#i-briefcase"></use></svg> Budgeted Positions
+                        </td>
+                        <td class="px-3 py-2 text-center mono text-slate-600">{{ snapshotPreview.currentCounts.positions }}</td>
+                        <td class="px-3 py-2 text-center mono font-bold text-indigo-600">{{ snapshotPreview.incomingCounts.positions }}</td>
+                        <td class="px-3 py-2 text-center">
+                          <span class="text-[11px] mono px-1.5 py-0.5 rounded font-bold"
+                            :class="snapshotPreview.incomingCounts.positions >= snapshotPreview.currentCounts.positions ? 'bg-emerald-100 text-emerald-700' : 'bg-rose-100 text-rose-700'">
+                            {{ (snapshotPreview.incomingCounts.positions - snapshotPreview.currentCounts.positions) >= 0 ? '+' : '' }}{{ snapshotPreview.incomingCounts.positions - snapshotPreview.currentCounts.positions }}
+                          </span>
+                        </td>
+                      </tr>
+                      <tr class="hover:bg-slate-50">
+                        <td class="px-3 py-2 font-medium text-slate-800 flex items-center gap-1.5">
+                          <svg class="ic w-3.5 h-3.5 text-slate-400"><use href="#i-search"></use></svg> Open Requisitions
+                        </td>
+                        <td class="px-3 py-2 text-center mono text-slate-600">{{ snapshotPreview.currentCounts.requisitions }}</td>
+                        <td class="px-3 py-2 text-center mono font-bold text-indigo-600">{{ snapshotPreview.incomingCounts.requisitions }}</td>
+                        <td class="px-3 py-2 text-center">
+                          <span class="text-[11px] mono px-1.5 py-0.5 rounded font-bold"
+                            :class="snapshotPreview.incomingCounts.requisitions >= snapshotPreview.currentCounts.requisitions ? 'bg-emerald-100 text-emerald-700' : 'bg-rose-100 text-rose-700'">
+                            {{ (snapshotPreview.incomingCounts.requisitions - snapshotPreview.currentCounts.requisitions) >= 0 ? '+' : '' }}{{ snapshotPreview.incomingCounts.requisitions - snapshotPreview.currentCounts.requisitions }}
+                          </span>
+                        </td>
+                      </tr>
+                      <tr class="hover:bg-slate-50">
+                        <td class="px-3 py-2 font-medium text-slate-800 flex items-center gap-1.5">
+                          <svg class="ic w-3.5 h-3.5 text-slate-400"><use href="#i-users"></use></svg> Candidates in Pipeline
+                        </td>
+                        <td class="px-3 py-2 text-center mono text-slate-600">{{ snapshotPreview.currentCounts.candidates }}</td>
+                        <td class="px-3 py-2 text-center mono font-bold text-indigo-600">{{ snapshotPreview.incomingCounts.candidates }}</td>
+                        <td class="px-3 py-2 text-center">
+                          <span class="text-[11px] mono px-1.5 py-0.5 rounded font-bold"
+                            :class="snapshotPreview.incomingCounts.candidates >= snapshotPreview.currentCounts.candidates ? 'bg-emerald-100 text-emerald-700' : 'bg-rose-100 text-rose-700'">
+                            {{ (snapshotPreview.incomingCounts.candidates - snapshotPreview.currentCounts.candidates) >= 0 ? '+' : '' }}{{ snapshotPreview.incomingCounts.candidates - snapshotPreview.currentCounts.candidates }}
+                          </span>
+                        </td>
+                      </tr>
+                      <tr class="hover:bg-slate-50">
+                        <td class="px-3 py-2 font-medium text-slate-800 flex items-center gap-1.5">
+                          <svg class="ic w-3.5 h-3.5 text-slate-400"><use href="#i-shield"></use></svg> Audit Ledger Events
+                        </td>
+                        <td class="px-3 py-2 text-center mono text-slate-600">{{ snapshotPreview.currentCounts.audit }}</td>
+                        <td class="px-3 py-2 text-center mono font-bold text-indigo-600">{{ snapshotPreview.incomingCounts.audit }}</td>
+                        <td class="px-3 py-2 text-center">
+                          <span class="text-[11px] mono px-1.5 py-0.5 rounded font-bold"
+                            :class="snapshotPreview.incomingCounts.audit >= snapshotPreview.currentCounts.audit ? 'bg-emerald-100 text-emerald-700' : 'bg-rose-100 text-rose-700'">
+                            {{ (snapshotPreview.incomingCounts.audit - snapshotPreview.currentCounts.audit) >= 0 ? '+' : '' }}{{ snapshotPreview.incomingCounts.audit - snapshotPreview.currentCounts.audit }}
+                          </span>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+
+              <div class="flex items-center justify-end gap-2 mt-4 pt-3 border-t border-slate-100">
+                <button @click="snapshotPreview=null" class="h-9 px-4 rounded-lg border border-slate-300 text-slate-600 text-xs font-semibold hover:bg-slate-50">
+                  Discard
+                </button>
+                <button @click="commitSnapshotRestore" :disabled="snapshotPreview.fatal.length > 0" class="h-9 px-4 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold disabled:opacity-40 flex items-center gap-1.5 shadow-sm">
+                  <svg class="ic w-3.5 h-3.5"><use href="#i-check"></use></svg> Confirm &amp; Overwrite Active Database
+                </button>
+              </div>
+            </div>
+
             <div class="mt-4 rounded-lg bg-slate-50 border border-slate-200 p-3 text-[11.5px] text-slate-600 leading-relaxed">
               <strong class="text-slate-700">Storage:</strong> state persists under <span class="mono">localStorage["hris.sandbox.v1"]</span>. Snapshots are the migration vehicle between browsers and machines — no server participates in this application.
             </div>
@@ -6669,7 +6976,7 @@ var App = {
       /* modals */
       leaveModal: false, leaveForm: { type: LEAVE_TYPES[0], from: '', to: '', note: '' },
       payslipId: '',
-      hubOpen: false, hubTab: 'import', hubDrag: false, importPreview: null,
+      hubOpen: false, hubTab: 'import', hubDrag: false, importPreview: null, snapshotPreview: null,
       /* academy tax lab */
       acadPay: { salary: 145000, bonus: 2500, k401: 6, stateRate: 5 },
       /* toasts */
@@ -8473,29 +8780,113 @@ var App = {
       download('hris-snapshot-' + this.today + '.json', JSON.stringify(payload, null, 2), 'application/json');
       this.toast('ok', 'Full state snapshot serialized (' + this.db.employees.length + ' workers).');
     },
+    openMassImport: function () {
+      this.hubOpen = true;
+      this.hubTab = 'import';
+      this.importPreview = null;
+      this.snapshotPreview = null;
+    },
     onSnapshotFile: function (ev) {
       var file = ev.target.files && ev.target.files[0];
       ev.target.value = '';
-      if (!file) return;
+      if (file) this.readJSON(file);
+    },
+    onDropSnapshot: function (ev) {
+      this.hubDrag = false;
+      var file = ev.dataTransfer && ev.dataTransfer.files && ev.dataTransfer.files[0];
+      if (file) this.readJSON(file);
+    },
+    readJSON: function (file) {
       var self = this, reader = new FileReader();
       reader.onload = function (r) {
-        var data;
-        try { data = JSON.parse(r.target.result); }
-        catch (err) { self.toast('error', 'Restore failed: file is not valid JSON.'); return; }
-        if (data.schema && data.schema !== 'peoplecore.hris.sandbox') {
-          self.toast('error', 'Schema check failed: not a PeopleCore snapshot.');
-          return;
-        }
-        var state = data.state || (Array.isArray(data.employees) ? data : null);
-        if (!state || !Array.isArray(state.employees) || !state.employees.length) {
-          self.toast('error', 'Schema check failed: no employee array found.');
-          return;
-        }
-        self.applyState(state);
-        self.logEvent('SNAPSHOT_RESTORED', 'State restored from ' + file.name, { file: file.name, workers: state.employees.length });
-        self.toast('ok', 'Snapshot restored — ' + state.employees.length + ' worker records loaded.');
+        var sizeStr = file.size ? (file.size / 1024).toFixed(1) + ' KB' : 'unknown';
+        self.previewSnapshot(r.target.result, file.name, sizeStr);
       };
       reader.readAsText(file);
+    },
+    previewSnapshot: function (text, fileName, fileSize) {
+      var data, fatal = [];
+      try {
+        data = JSON.parse(text);
+      } catch (err) {
+        fatal.push('File is not valid JSON: ' + (err && err.message ? err.message : 'syntax error'));
+      }
+      var state = null, exportedAt = null;
+      if (!fatal.length) {
+        if (data && typeof data === 'object') {
+          if (data.schema && data.schema !== 'peoplecore.hris.sandbox') {
+            fatal.push('Schema check failed: unrecognized schema "' + data.schema + '". Expected "peoplecore.hris.sandbox".');
+          } else if (data.state && typeof data.state === 'object') {
+            state = data.state;
+            exportedAt = data.exportedAt || null;
+          } else if (Array.isArray(data)) {
+            state = { employees: data };
+          } else if (Array.isArray(data.employees)) {
+            state = data;
+          } else {
+            fatal.push('Schema check failed: missing expected root keys (expected "employees", "positions", "requisitions", "candidates", "audit").');
+          }
+        } else {
+          fatal.push('Invalid JSON payload: expected a snapshot object or employee array.');
+        }
+      }
+      if (state && !fatal.length) {
+        if (!Array.isArray(state.employees) || !state.employees.length) {
+          fatal.push('Missing or empty "employees" array: at least one employee record is required.');
+        }
+      }
+      var incomingCounts = {
+        employees: (state && Array.isArray(state.employees)) ? state.employees.length : 0,
+        positions: (state && Array.isArray(state.positions)) ? state.positions.length : 0,
+        requisitions: (state && Array.isArray(state.requisitions)) ? state.requisitions.length : 0,
+        candidates: (state && Array.isArray(state.candidates)) ? state.candidates.length : 0,
+        audit: (state && Array.isArray(state.audit)) ? state.audit.length : 0
+      };
+      var currentCounts = {
+        employees: this.db.employees.length,
+        positions: this.db.positions.length,
+        requisitions: this.db.requisitions.length,
+        candidates: this.db.candidates.length,
+        audit: this.db.audit.length
+      };
+      this.importPreview = null;
+      this.snapshotPreview = {
+        fileName: fileName,
+        fileSize: fileSize,
+        exportedAt: exportedAt,
+        rawState: state,
+        incomingCounts: incomingCounts,
+        currentCounts: currentCounts,
+        fatal: fatal
+      };
+      if (fatal.length) {
+        this.toast('error', 'Snapshot rejected: ' + fatal[0]);
+      } else {
+        this.toast('warn', 'Snapshot validated: review diff before confirming overwrite.');
+      }
+    },
+    commitSnapshotRestore: function () {
+      var p = this.snapshotPreview;
+      if (!p || !p.rawState || (p.fatal && p.fatal.length)) return;
+      var state = p.rawState;
+      var fileName = p.fileName;
+      this.applyState(state);
+      this.logEvent('DATABASE_SNAPSHOT_RESTORED', 'Database state snapshot restored from ' + fileName, {
+        file: fileName,
+        employees: this.db.employees.length,
+        positions: this.db.positions.length,
+        requisitions: this.db.requisitions.length,
+        candidates: this.db.candidates.length,
+        auditRecords: this.db.audit.length
+      });
+      try {
+        localStorage.setItem(LS_KEY, JSON.stringify(this.db));
+      } catch (err) { /* quota */ }
+      this.snapshotPreview = null;
+      this.importPreview = null;
+      var self = this;
+      this.$nextTick(function () { self.renderCharts(); });
+      this.toast('ok', 'Active database restored — ' + this.db.employees.length + ' employee records loaded.');
     },
     applyState: function (state) {
       var base = seedDB();
@@ -8503,8 +8894,11 @@ var App = {
       this.db = normalizeDB(base);
       this.profileId = ''; this.payslipId = ''; this.scorecardId = ''; this.hireCand = null;
       this.importPreview = null;
+      this.snapshotPreview = null;
       this.timeEmpId = this.db.roleActorId;
       this.syncPayState();
+      var self = this;
+      this.$nextTick(function () { self.renderCharts(); });
     },
     runExport: function (key) {
       if (key === 'directory') this.exportDirectoryCSV();
@@ -8526,15 +8920,25 @@ var App = {
     onCSVFile: function (ev) {
       var file = ev.target.files && ev.target.files[0];
       ev.target.value = '';
-      if (file) this.readCSV(file);
+      if (file) this.handleIngestFile(file);
     },
     onDropCSV: function (ev) {
       this.hubDrag = false;
       var file = ev.dataTransfer && ev.dataTransfer.files && ev.dataTransfer.files[0];
-      if (file) this.readCSV(file);
+      if (file) this.handleIngestFile(file);
+    },
+    handleIngestFile: function (file) {
+      var name = (file.name || '').toLowerCase();
+      var type = (file.type || '').toLowerCase();
+      if (name.endsWith('.json') || type === 'application/json') {
+        this.readJSON(file);
+      } else {
+        this.readCSV(file);
+      }
     },
     readCSV: function (file) {
       if (!this.can('import')) { this.toast('error', 'Bulk import requires HR Super Admin.'); return; }
+      this.snapshotPreview = null;
       var self = this, reader = new FileReader();
       reader.onload = function (r) { self.previewCSV(r.target.result, file.name); };
       reader.readAsText(file);
