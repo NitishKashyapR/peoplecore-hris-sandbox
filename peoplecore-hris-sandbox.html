@@ -338,6 +338,7 @@
   <symbol id="i-fwd10" viewBox="0 0 24 24"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/><text x="12" y="15.4" text-anchor="middle" font-size="8.6" font-weight="700" fill="currentColor" stroke="none">10</text></symbol>
   <symbol id="i-star" viewBox="0 0 24 24"><path d="m12 2.5 3 6.1 6.7 1-4.85 4.7 1.15 6.7L12 17.85 5.99 21l1.16-6.7L2.3 9.6l6.7-1z"/></symbol>
   <symbol id="i-sliders" viewBox="0 0 24 24"><path d="M4 21v-6M4 11V3M12 21v-9M12 8V3M20 21v-5M20 12V3"/><path d="M1.5 15h5M9.5 8h5M17.5 16h5"/></symbol>
+  <symbol id="i-volume" viewBox="0 0 24 24"><path d="M11 5 6 9H2v6h4l5 4V5z"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/></symbol>
 
   <symbol id="i-gear" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.4"/><circle cx="12" cy="12" r="3.4"/><path d="M12 1.8V5.1M12 22.2V18.9M22.2 12H18.9M1.8 12h3.3M19.2 4.8l-2.3 2.3M4.8 19.2l2.3-2.3M19.2 19.2l-2.3-2.3M4.8 4.8l2.3 2.3"/></symbol>
 
@@ -388,6 +389,26 @@
             :class="db.mode==='academy' ? 'bg-indigo-600 text-white shadow-sm' : 'text-slate-400 hover:text-white'"
             class="flex items-center gap-1.5 px-2.5 sm:px-3 h-8 rounded-md text-[11px] font-semibold tracking-wider transition">
             <svg class="ic w-4 h-4"><use href="#i-book"></use></svg><span class="hidden sm:inline">ACADEMY</span>
+          </button>
+        </div>
+        <!-- Course selection segmented pill — rendered ONLY after the zero-teaser gate opens -->
+        <div v-if="db.mode==='academy' && course2Unlocked" class="flex bg-slate-800 rounded-lg p-1 gap-1 shrink-0 max-w-full"
+          role="tablist" aria-label="Academy course selection">
+          <button @click="setActiveCourse(1)" role="tab" :aria-selected="activeCourse===1" title="Course 1: Core Operations"
+            :class="activeCourse===1 ? 'bg-violet-600 text-white shadow-sm' : 'text-slate-400 hover:text-white'"
+            class="flex items-center gap-1.5 px-2.5 h-8 rounded-md text-[11px] font-semibold tracking-wide transition">
+            <svg class="ic w-4 h-4 shrink-0"><use href="#i-check"></use></svg>
+            <span class="hidden lg:inline">Course 1: Core Operations</span>
+            <span class="lg:hidden">Course 1</span>
+            <span class="mono text-[10px] opacity-85 hidden sm:inline">{{ academyDoneCount }}/10</span>
+          </button>
+          <button @click="setActiveCourse(2)" role="tab" :aria-selected="activeCourse===2" title="Course 2: Executive Audio Masterclass"
+            :class="activeCourse===2 ? 'bg-violet-600 text-white shadow-sm' : 'text-slate-400 hover:text-white'"
+            class="flex items-center gap-1.5 px-2.5 h-8 rounded-md text-[11px] font-semibold tracking-wide transition">
+            <svg class="ic w-4 h-4 shrink-0 text-amber-400"><use href="#i-star"></use></svg>
+            <span class="hidden lg:inline">Course 2: Executive Audio Masterclass</span>
+            <span class="lg:hidden">Course 2</span>
+            <span class="text-[9px] font-bold px-1.5 py-0.5 rounded-full bg-amber-500/20 text-amber-300 uppercase tracking-wider">New</span>
           </button>
         </div>
         <!-- Universal search index -->
@@ -2515,12 +2536,12 @@
           <div class="p-4 sm:p-5 border-b border-slate-200 bg-slate-50/60 flex items-start justify-between gap-3 shrink-0">
             <div class="min-w-0">
               <div class="flex items-center gap-2 mb-1">
-                <div class="w-6 h-6 rounded-md bg-indigo-600 text-white grid place-items-center shadow-xs shrink-0">
-                  <svg class="ic w-3.5 h-3.5 text-white"><use href="#i-book"></use></svg>
+                <div class="w-6 h-6 rounded-md grid place-items-center shadow-xs shrink-0" :class="activeCourse===2 ? 'bg-slate-900' : 'bg-indigo-600'">
+                  <svg class="ic w-3.5 h-3.5 text-white"><use :href="activeCourse===2 ? '#i-volume' : '#i-book'"></use></svg>
                 </div>
-                <h2 class="text-xs sm:text-sm font-bold tracking-[0.08em] text-slate-900 uppercase">HR Academy Curriculum</h2>
+                <h2 class="text-xs sm:text-sm font-bold tracking-[0.08em] text-slate-900 uppercase">{{ activeCourse===2 ? 'Executive Masterclass' : 'HR Academy Curriculum' }}</h2>
               </div>
-              <p class="text-[11px] sm:text-xs text-slate-500 font-medium">10 Interactive Modules &bull; Enterprise Operations</p>
+              <p class="text-[11px] sm:text-xs text-slate-500 font-medium">{{ activeCourse===2 ? '3 Audio Episodes • Executive Briefings' : '10 Interactive Modules • Enterprise Operations' }}</p>
             </div>
             <button type="button" @click="closeAcademyDrawer" aria-label="Close curriculum drawer" title="Close drawer (Esc)"
               class="w-9 h-9 rounded-lg border border-slate-200 bg-white hover:bg-slate-100 text-slate-500 hover:text-slate-900 grid place-items-center shadow-xs transition focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-600 shrink-0 cursor-pointer">
@@ -2531,7 +2552,7 @@
           <!-- Drawer Content: Scrollable Curriculum Tree -->
           <div class="flex-1 overflow-y-auto scroll-slim p-3 sm:p-4 space-y-4">
             <!-- Overall progress bar and percentage at the top -->
-            <div class="p-3.5 rounded-xl border border-slate-200/80 bg-slate-50/50">
+            <div class="p-3.5 rounded-xl border border-slate-200/80 bg-slate-50/50" v-if="activeCourse===1">
               <div class="flex items-center justify-between text-xs mb-1.5">
                 <span class="font-medium text-slate-600">Curriculum Progress</span>
                 <span class="mono font-bold text-slate-800">{{ academyDoneCount }}/10 ({{ academyDoneCount * 10 }}%)</span>
@@ -2548,8 +2569,8 @@
               </div>
             </div>
 
-            <!-- List of all 10 modules -->
-            <nav class="space-y-1.5" aria-label="Academy Modules (Mobile Drawer)">
+            <!-- List of all 10 modules (Course 1) — or Course 2 episode list after unlock -->
+            <nav v-if="activeCourse===1" class="space-y-1.5" aria-label="Academy Modules (Mobile Drawer)">
               <button v-for="m in academy" :key="m.n" @click="gotoModule(m.n)"
                 :class="[
                   'w-full flex items-start gap-3 p-3 rounded-xl border text-left transition-all group min-h-[52px] cursor-pointer',
@@ -2605,6 +2626,44 @@
                 <svg v-if="db.am === m.n" class="ic w-4 h-4 text-indigo-600 shrink-0 self-center"><use href="#i-chev-r"></use></svg>
               </button>
             </nav>
+
+            <!-- Course 2 episode list — exists in DOM ONLY after the unlock gate opens -->
+            <nav v-else class="space-y-1.5" aria-label="Course 2 Executive Episodes (Mobile Drawer)">
+              <div class="p-3.5 rounded-xl border border-amber-200/80 bg-amber-50/60">
+                <div class="flex items-center justify-between text-xs mb-1.5">
+                  <span class="font-semibold text-amber-800 flex items-center gap-1.5">
+                    <svg class="ic w-3.5 h-3.5"><use href="#i-star"></use></svg> Executive Masterclass
+                  </span>
+                  <span class="mono font-bold text-amber-700">{{ course2Episodes.length }} episodes</span>
+                </div>
+                <div class="text-[11px] text-amber-700 leading-snug">Audio-only executive briefings — streamed on demand.</div>
+              </div>
+              <button v-for="e in course2Episodes" :key="e.n" @click="gotoEpisode(e.n)"
+                :class="[
+                  'w-full flex items-start gap-3 p-3 rounded-xl border text-left transition-all group min-h-[52px] cursor-pointer',
+                  activeEpisode === e.n
+                    ? 'bg-violet-50/80 text-violet-700 font-semibold border-l-4 border-violet-600 border-violet-200/80 shadow-xs'
+                    : 'bg-white hover:bg-slate-50 text-slate-700 border-slate-200/70 hover:border-slate-300'
+                ]">
+                <span class="w-7 h-7 rounded-lg grid place-items-center text-[10px] font-bold shrink-0 mt-0.5 transition"
+                  :class="activeEpisode === e.n ? 'bg-violet-600 text-white shadow-xs' : 'bg-slate-100 text-slate-500 group-hover:bg-violet-100 group-hover:text-violet-600'">
+                  <svg v-if="activeEpisode === e.n" class="ic w-3.5 h-3.5"><use href="#i-play"></use></svg>
+                  <span v-else class="mono">0{{ e.n }}</span>
+                </span>
+                <span class="min-w-0 flex-1">
+                  <span class="flex items-center gap-1.5 flex-wrap">
+                    <span class="text-[10px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded mono"
+                      :class="activeEpisode === e.n ? 'bg-violet-200/60 text-violet-800' : 'bg-slate-100 text-slate-500'">EP 0{{ e.n }}</span>
+                    <span class="text-[10px] uppercase font-semibold text-slate-400">&bull; Audio</span>
+                  </span>
+                  <span class="block text-[13px] mt-1 leading-snug"
+                    :class="activeEpisode === e.n ? 'text-violet-950 font-bold' : 'text-slate-800 font-semibold group-hover:text-violet-600'">
+                    {{ e.title }}
+                  </span>
+                </span>
+                <svg v-if="activeEpisode === e.n" class="ic w-4 h-4 text-violet-600 shrink-0 self-center"><use href="#i-chev-r"></use></svg>
+              </button>
+            </nav>
           </div>
 
           <!-- Drawer Footer: Claim Certificate action card -->
@@ -2635,10 +2694,10 @@
             <div class="p-4 border-b border-slate-200 bg-slate-50/60 flex items-start justify-between gap-2 shrink-0">
               <div class="min-w-0">
                 <div class="flex items-center gap-2 mb-1">
-                  <svg class="ic w-4 h-4 text-violet-600 shrink-0"><use href="#i-book"></use></svg>
-                  <span class="text-xs font-bold tracking-[0.12em] text-slate-800 uppercase">HR ACADEMY</span>
+                  <svg class="ic w-4 h-4 shrink-0" :class="activeCourse===2 ? 'text-amber-500' : 'text-violet-600'"><use :href="activeCourse===2 ? '#i-volume' : '#i-book'"></use></svg>
+                  <span class="text-xs font-bold tracking-[0.12em] text-slate-800 uppercase">{{ activeCourse===2 ? 'EXECUTIVE MASTERCLASS' : 'HR ACADEMY' }}</span>
                 </div>
-                <p class="text-[11px] text-slate-500 leading-relaxed truncate">10 curriculum modules &bull; flight-checks</p>
+                <p class="text-[11px] text-slate-500 leading-relaxed truncate">{{ activeCourse===2 ? '3 audio episodes • executive briefings' : '10 curriculum modules • flight-checks' }}</p>
               </div>
               <button type="button" @click="toggleAcademyDrawer" title="Collapse sidebar to expand reading area"
                 class="w-7 h-7 rounded-md border border-slate-200 bg-white hover:bg-slate-100 text-slate-400 hover:text-slate-700 grid place-items-center transition cursor-pointer shrink-0">
@@ -2649,16 +2708,16 @@
             <!-- Progress bar -->
             <div class="p-3 border-b border-slate-200 bg-white shrink-0">
               <div class="flex items-center justify-between text-[11px] mb-1">
-                <span class="text-slate-500 font-medium">Certification progress</span>
-                <span class="mono font-semibold text-slate-700">{{ academyDoneCount }}/10</span>
+                <span class="text-slate-500 font-medium">{{ activeCourse===2 ? 'Masterclass episodes' : 'Certification progress' }}</span>
+                <span class="mono font-semibold text-slate-700">{{ activeCourse===2 ? course2Episodes.length + ' EPs' : academyDoneCount + '/10' }}</span>
               </div>
               <div class="h-1.5 bg-slate-200 rounded-full overflow-hidden">
-                <div class="h-full bg-violet-600 transition-all duration-500" :style="{width:(academyDoneCount*10)+'%'}"></div>
+                <div class="transition-all duration-500" :class="activeCourse===2 ? 'bg-amber-500 w-full' : 'bg-violet-600'" :style="activeCourse===2 ? {} : {width:(academyDoneCount*10)+'%'}"></div>
               </div>
             </div>
 
-            <!-- Curriculum Module List -->
-            <nav class="p-2.5 space-y-1 flex-1 overflow-y-auto scroll-slim" aria-label="Desktop Academy Modules">
+            <!-- Curriculum Module List (Course 1) -->
+            <nav v-if="activeCourse===1" class="p-2.5 space-y-1 flex-1 overflow-y-auto scroll-slim" aria-label="Desktop Academy Modules">
               <button v-for="m in academy" :key="m.n" @click="gotoModule(m.n)"
                 :class="[
                   'w-full flex items-start gap-2.5 px-2.5 py-2 rounded-lg border text-left transition min-h-[44px] cursor-pointer',
@@ -2696,6 +2755,37 @@
               </button>
             </nav>
 
+            <!-- Course 2 episode list — exists in DOM ONLY after the unlock gate opens -->
+            <nav v-else class="p-2.5 space-y-1 flex-1 overflow-y-auto scroll-slim" aria-label="Desktop Course 2 Episodes">
+              <button v-for="e in course2Episodes" :key="e.n" @click="gotoEpisode(e.n)"
+                :class="[
+                  'w-full flex items-start gap-2.5 px-2.5 py-2 rounded-lg border text-left transition min-h-[44px] cursor-pointer',
+                  activeEpisode === e.n
+                    ? 'bg-slate-900 text-white border-slate-900 shadow-xs'
+                    : 'bg-white text-slate-600 border-transparent hover:bg-slate-50 hover:border-slate-200'
+                ]">
+                <span class="w-6 h-6 rounded-md grid place-items-center shrink-0 mt-0.5"
+                  :class="activeEpisode === e.n ? 'bg-amber-500/90 text-slate-900' : 'bg-amber-100 text-amber-700'">
+                  <svg class="ic w-3.5 h-3.5"><use :href="activeEpisode === e.n ? '#i-play' : '#i-volume'"></use></svg>
+                </span>
+                <span class="min-w-0 flex-1">
+                  <span class="flex items-center gap-1.5">
+                    <span class="text-[10px] font-bold mono tracking-wider"
+                      :class="activeEpisode === e.n ? 'text-amber-300' : 'text-slate-400'">EP 0{{ e.n }}</span>
+                    <span class="text-[10px] uppercase font-semibold"
+                      :class="activeEpisode === e.n ? 'text-slate-400' : 'text-slate-400'">&bull; Audio</span>
+                  </span>
+                  <span class="block text-[13px] leading-snug mt-0.5"
+                    :class="activeEpisode === e.n ? 'text-white font-semibold' : 'text-slate-700 font-medium'">
+                    {{ e.title }}
+                  </span>
+                  <span class="block text-[10px] mt-0.5 mono" :class="activeEpisode === e.n ? 'text-slate-400' : 'text-slate-400'">
+                    {{ e.duration }}
+                  </span>
+                </span>
+              </button>
+            </nav>
+
             <!-- Sidebar Footer -->
             <div class="p-3 border-t border-slate-200 bg-white shrink-0">
               <div class="rounded-xl border p-3 text-center" :class="db.certifiedAt ? 'border-emerald-300 bg-emerald-50' : 'border-slate-200 bg-slate-50'">
@@ -2726,34 +2816,323 @@
                 </button>
                 <button type="button" @click="openAcademyDrawer"
                   class="flex items-center gap-1 sm:gap-2 text-left min-w-0 flex-1 overflow-hidden text-slate-700 hover:text-indigo-600 transition group cursor-pointer focus:outline-none">
-                  <span class="text-xs sm:text-sm font-bold text-slate-900 group-hover:text-indigo-600 shrink-0">Module {{ currentAcademy.n }}:</span>
-                  <span class="text-xs sm:text-sm font-medium text-slate-600 group-hover:text-indigo-600 truncate block min-w-0">{{ currentAcademy.title }}</span>
+                  <template v-if="activeCourse===2">
+                    <span class="text-xs sm:text-sm font-bold text-slate-900 group-hover:text-indigo-600 shrink-0">EP 0{{ activeEpisode }}:</span>
+                    <span class="text-xs sm:text-sm font-medium text-slate-600 group-hover:text-indigo-600 truncate block min-w-0">{{ course2Episodes[activeEpisode-1].title }}</span>
+                  </template>
+                  <template v-else>
+                    <span class="text-xs sm:text-sm font-bold text-slate-900 group-hover:text-indigo-600 shrink-0">Module {{ currentAcademy.n }}:</span>
+                    <span class="text-xs sm:text-sm font-medium text-slate-600 group-hover:text-indigo-600 truncate block min-w-0">{{ currentAcademy.title }}</span>
+                  </template>
                   <svg class="ic w-3.5 h-3.5 text-slate-400 group-hover:text-indigo-500 shrink-0 hidden sm:inline"><use href="#i-chev-d"></use></svg>
                 </button>
               </div>
 
               <!-- Right: Quick progress badge + Next/Previous chevron navigation buttons -->
               <div class="flex items-center gap-1 sm:gap-2 shrink-0">
-                <div class="flex items-center gap-1 sm:gap-1.5 px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-full bg-slate-100 border border-slate-200/70 text-[10px] sm:text-[11px] font-semibold text-slate-700 shrink-0">
+                <div v-if="activeCourse===2" class="flex items-center gap-1 sm:gap-1.5 px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-full bg-amber-100 border border-amber-200/70 text-[10px] sm:text-[11px] font-semibold text-amber-800 shrink-0">
+                  <svg class="ic w-3 h-3 text-amber-600 shrink-0"><use href="#i-volume"></use></svg>
+                  <span class="mono">EP {{ activeEpisode }}/{{ course2Episodes.length }}</span>
+                  <span class="hidden md:inline text-amber-600 font-normal">Audio</span>
+                </div>
+                <div v-else class="flex items-center gap-1 sm:gap-1.5 px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-full bg-slate-100 border border-slate-200/70 text-[10px] sm:text-[11px] font-semibold text-slate-700 shrink-0">
                   <svg class="ic w-3 h-3 text-emerald-600 shrink-0"><use href="#i-check"></use></svg>
                   <span class="mono">{{ academyDoneCount }}/10</span>
                   <span class="hidden md:inline text-slate-500 font-normal">Completed</span>
                 </div>
                 <div class="flex items-center gap-1 shrink-0">
-                  <button type="button" @click="gotoModule(db.am-1)" :disabled="db.am===1" aria-label="Previous module" title="Previous module"
-                    class="w-7 h-7 sm:w-8 sm:h-8 rounded-lg border border-slate-200 bg-white text-slate-600 hover:bg-slate-50 hover:text-slate-900 disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center shadow-xs transition cursor-pointer">
-                    <svg class="ic w-3.5 h-3.5 sm:w-4 sm:h-4"><use href="#i-chev-l"></use></svg>
-                  </button>
-                  <button type="button" @click="gotoModule(db.am+1)" :disabled="db.am===10 || !moduleUnlocked(db.am+1)" aria-label="Next module" title="Next module"
-                    class="w-7 h-7 sm:w-8 sm:h-8 rounded-lg border border-slate-200 bg-white text-slate-600 hover:bg-slate-50 hover:text-slate-900 disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center shadow-xs transition cursor-pointer">
-                    <svg class="ic w-3.5 h-3.5 sm:w-4 sm:h-4"><use href="#i-chev-r"></use></svg>
-                  </button>
+                  <template v-if="activeCourse===2">
+                    <button type="button" @click="gotoEpisode(activeEpisode-1)" :disabled="activeEpisode===1" aria-label="Previous episode" title="Previous episode"
+                      class="w-7 h-7 sm:w-8 sm:h-8 rounded-lg border border-slate-200 bg-white text-slate-600 hover:bg-slate-50 hover:text-slate-900 disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center shadow-xs transition cursor-pointer">
+                      <svg class="ic w-3.5 h-3.5 sm:w-4 sm:h-4"><use href="#i-chev-l"></use></svg>
+                    </button>
+                    <button type="button" @click="gotoEpisode(activeEpisode+1)" :disabled="activeEpisode===course2Episodes.length" aria-label="Next episode" title="Next episode"
+                      class="w-7 h-7 sm:w-8 sm:h-8 rounded-lg border border-slate-200 bg-white text-slate-600 hover:bg-slate-50 hover:text-slate-900 disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center shadow-xs transition cursor-pointer">
+                      <svg class="ic w-3.5 h-3.5 sm:w-4 sm:h-4"><use href="#i-chev-r"></use></svg>
+                    </button>
+                  </template>
+                  <template v-else>
+                    <button type="button" @click="gotoModule(db.am-1)" :disabled="db.am===1" aria-label="Previous module" title="Previous module"
+                      class="w-7 h-7 sm:w-8 sm:h-8 rounded-lg border border-slate-200 bg-white text-slate-600 hover:bg-slate-50 hover:text-slate-900 disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center shadow-xs transition cursor-pointer">
+                      <svg class="ic w-3.5 h-3.5 sm:w-4 sm:h-4"><use href="#i-chev-l"></use></svg>
+                    </button>
+                    <button type="button" @click="gotoModule(db.am+1)" :disabled="db.am===10 || !moduleUnlocked(db.am+1)" aria-label="Next module" title="Next module"
+                      class="w-7 h-7 sm:w-8 sm:h-8 rounded-lg border border-slate-200 bg-white text-slate-600 hover:bg-slate-50 hover:text-slate-900 disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center shadow-xs transition cursor-pointer">
+                      <svg class="ic w-3.5 h-3.5 sm:w-4 sm:h-4"><use href="#i-chev-r"></use></svg>
+                    </button>
+                  </template>
                 </div>
               </div>
             </div>
 
+            <!-- ============ COURSE 2: ACTIVE EPISODE STUDIO (master-detail — sidebar = playlist) ============ -->
+            <div v-if="course2Unlocked && activeCourse===2" class="min-w-0 p-4 sm:p-6 lg:p-8 max-w-[1024px]">
+
+              <!-- 1 · Hero: episode metadata badge row + large title + subtitle -->
+              <div class="mb-5 pb-5 border-b border-slate-200">
+                <div class="flex flex-wrap items-center gap-2 mb-2.5">
+                  <span class="text-[10px] font-bold px-2 py-1 rounded bg-slate-900 text-white tracking-wider">COURSE 2</span>
+                  <span class="text-[10px] font-bold px-2 py-1 rounded bg-amber-100 text-amber-700 tracking-wider">EXECUTIVE BRIEFING</span>
+                  <span class="text-[10px] font-bold px-2 py-1 rounded bg-sky-100 text-sky-700 tracking-wider">EPISODE 0{{ activeEpisode }}</span>
+                  <span class="text-[10px] px-2 py-1 rounded border border-slate-200 text-slate-500 mono">{{ currentEpisode.duration }} &bull; AUDIO</span>
+                  <span class="text-[10px] font-bold px-2 py-1 rounded bg-emerald-100 text-emerald-700 flex items-center gap-1"><svg class="ic w-3 h-3"><use href="#i-check"></use></svg>UNLOCKED</span>
+                </div>
+                <h1 class="text-2xl sm:text-[28px] font-semibold text-slate-900 leading-tight">{{ currentEpisode.title }}</h1>
+                <p class="text-sm text-slate-500 mt-2 leading-relaxed">{{ currentEpisode.summary }}</p>
+              </div>
+
+              <!-- 2 · Audio deck (Course 1 narrator design system) -->
+              <course2-player :n="activeEpisode"></course2-player>
+
+              <!-- 3 · Executive brief + core takeaways -->
+              <div class="grid lg:grid-cols-[minmax(0,58fr)_minmax(0,42fr)] gap-4 mb-5">
+                <div class="rounded-xl border border-slate-200 bg-white p-4 sm:p-5">
+                  <div class="flex items-center gap-2 mb-2.5">
+                    <span class="w-6 h-6 rounded-md bg-slate-900 text-white grid place-items-center shrink-0"><svg class="ic w-3.5 h-3.5"><use href="#i-eye"></use></svg></span>
+                    <span class="lbl">Executive Context &amp; Strategic Stakes</span>
+                  </div>
+                  <p class="text-[13.5px] leading-relaxed text-slate-600">{{ currentEpisode.context }}</p>
+                </div>
+                <div class="rounded-xl border border-indigo-200 bg-indigo-50/70 p-4 sm:p-5">
+                  <div class="flex items-center gap-2 mb-2.5">
+                    <span class="w-6 h-6 rounded-md bg-indigo-600 text-white grid place-items-center shrink-0"><svg class="ic w-3.5 h-3.5"><use href="#i-check"></use></svg></span>
+                    <span class="lbl text-indigo-700">Core Takeaways</span>
+                  </div>
+                  <ul class="space-y-2">
+                    <li v-for="(t,i) in currentEpisode.takeaways" :key="i" class="flex items-start gap-2 text-[13px] leading-snug text-indigo-950">
+                      <svg class="ic w-4 h-4 text-indigo-500 shrink-0 mt-0.5"><use href="#i-check"></use></svg>
+                      <span>{{ t }}</span>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+
+              <!-- 4 · Rich dossier — bespoke visual per episode -->
+              <template v-if="activeEpisode===1">
+                <!-- EP01 · Architecture comparison -->
+                <div class="rounded-xl border border-slate-200 bg-white overflow-hidden mb-4">
+                  <div class="px-4 py-3 border-b border-slate-200 bg-slate-50/70 flex items-center gap-2">
+                    <svg class="ic w-4 h-4 text-indigo-600 shrink-0"><use href="#i-columns"></use></svg>
+                    <span class="text-[13px] font-bold text-slate-800">Unified Monolith vs. Best-of-Breed + SCIM Core</span>
+                  </div>
+                  <div class="overflow-x-auto">
+                    <table class="w-full text-sm border-0 min-w-[640px]">
+                      <thead><tr class="bg-slate-900 text-slate-300 text-[11px] uppercase tracking-wider"><th class="text-left font-semibold px-3 py-2.5 w-[22%]">Dimension</th><th class="text-left font-semibold px-3 py-2.5">Unified Monolith (Workday / Oracle)</th><th class="text-left font-semibold px-3 py-2.5">Best-of-Breed + SCIM Core (PeopleCore / Hub)</th></tr></thead>
+                      <tbody class="divide-y divide-slate-100 bg-white">
+                        <tr><td class="px-3 py-2.5 font-semibold text-slate-800">Integration surface</td><td class="px-3 py-2.5 text-slate-600">Vendor-defined — every edge is a paid connector on the vendor roadmap</td><td class="px-3 py-2.5 text-slate-600">Event-driven — webhooks and SCIM endpoints you own and version</td></tr>
+                        <tr><td class="px-3 py-2.5 font-semibold text-slate-800">Upgrade cadence</td><td class="px-3 py-2.5 text-slate-600">Big-bang releases twice a year; custom configuration at risk each cycle</td><td class="px-3 py-2.5 text-slate-600">Independent deploys per system — no synchronised org-wide downtime</td></tr>
+                        <tr><td class="px-3 py-2.5 font-semibold text-slate-800">Identity provisioning</td><td class="px-3 py-2.5 text-slate-600">Directory-sync add-ons drift on leavers and contractors</td><td class="px-3 py-2.5 text-slate-600">SCIM from the IdP is authoritative — HR record drives the directory</td></tr>
+                        <tr><td class="px-3 py-2.5 font-semibold text-slate-800">Time-travel data</td><td class="px-3 py-2.5 text-slate-600">Point-in-time reporting varies by module and export window</td><td class="px-3 py-2.5 text-slate-600">Temporal tables — headcount at any past date is a query, not archaeology</td></tr>
+                        <tr><td class="px-3 py-2.5 font-semibold text-slate-800">Exit cost</td><td class="px-3 py-2.5 text-slate-600">Data egress plus full process re-implementation</td><td class="px-3 py-2.5 text-slate-600">Services are replaceable — the identity hub survives a component swap</td></tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+                <!-- EP01 · SCIM provisioning flow -->
+                <div class="rounded-xl border border-slate-200 bg-white p-4 sm:p-5">
+                  <div class="flex items-center gap-2 mb-3">
+                    <svg class="ic w-4 h-4 text-indigo-600 shrink-0"><use href="#i-sitemap"></use></svg>
+                    <span class="lbl">Provisioning flow — identity changes propagate once, then fan out</span>
+                  </div>
+                  <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-1.5">
+                    <div class="flex-1 rounded-lg border border-indigo-200 bg-indigo-50/70 px-3 py-2.5 text-center min-w-0">
+                      <div class="text-[9px] font-bold uppercase tracking-wider text-indigo-500">Source</div>
+                      <div class="text-[13px] font-bold text-indigo-950 leading-tight">Identity Provider</div>
+                      <div class="text-[11px] text-indigo-700 mono">IdP / Okta</div>
+                    </div>
+                    <svg class="ic w-4 h-4 text-slate-400 shrink-0 mx-auto rotate-90 sm:rotate-0"><use href="#i-chev-r"></use></svg>
+                    <div class="flex-1 rounded-lg border border-indigo-200 bg-indigo-50/70 px-3 py-2.5 text-center min-w-0">
+                      <div class="text-[9px] font-bold uppercase tracking-wider text-indigo-500">Protocol</div>
+                      <div class="text-[13px] font-bold text-indigo-950 leading-tight">SCIM 2.0</div>
+                      <div class="text-[11px] text-indigo-700 mono">create · update · deactivate</div>
+                    </div>
+                    <svg class="ic w-4 h-4 text-slate-400 shrink-0 mx-auto rotate-90 sm:rotate-0"><use href="#i-chev-r"></use></svg>
+                    <div class="flex-1 rounded-lg border-2 border-slate-900 bg-slate-900 text-white px-3 py-2.5 text-center min-w-0">
+                      <div class="text-[9px] font-bold uppercase tracking-wider text-amber-400">System of record</div>
+                      <div class="text-[13px] font-bold leading-tight">Core HRIS</div>
+                      <div class="text-[11px] text-slate-300 mono">PeopleCore Hub</div>
+                    </div>
+                    <svg class="ic w-4 h-4 text-slate-400 shrink-0 mx-auto rotate-90 sm:rotate-0"><use href="#i-chev-r"></use></svg>
+                    <div class="flex-1 rounded-lg border border-sky-200 bg-sky-50 px-3 py-2.5 text-center min-w-0">
+                      <div class="text-[9px] font-bold uppercase tracking-wider text-sky-600">Transport</div>
+                      <div class="text-[13px] font-bold text-sky-950 leading-tight">Webhook Dispatch</div>
+                      <div class="text-[11px] text-sky-700 mono">signed · retried · audited</div>
+                    </div>
+                    <svg class="ic w-4 h-4 text-slate-400 shrink-0 mx-auto rotate-90 sm:rotate-0"><use href="#i-chev-r"></use></svg>
+                    <div class="flex-1 rounded-lg border border-emerald-200 bg-emerald-50 px-3 py-2.5 text-center min-w-0">
+                      <div class="text-[9px] font-bold uppercase tracking-wider text-emerald-600">Consumers</div>
+                      <div class="text-[13px] font-bold text-emerald-950 leading-tight">Downstream</div>
+                      <div class="text-[11px] text-emerald-700">Payroll · ATS · ITSM · BI</div>
+                    </div>
+                  </div>
+                  <p class="mt-3 text-[11.5px] text-slate-400 flex items-start gap-1.5">
+                    <svg class="ic w-3.5 h-3.5 shrink-0 mt-0.5 text-emerald-600"><use href="#i-check"></use></svg>
+                    <span>Leavers de-provision in the same transaction that terminates employment — the directory can never outlive the worker record.</span>
+                  </p>
+                </div>
+              </template>
+
+              <template v-else-if="activeEpisode===2">
+                <!-- EP02 · Salary band geometry -->
+                <div class="rounded-xl border border-slate-200 bg-white p-4 sm:p-5 mb-4">
+                  <div class="flex flex-wrap items-center justify-between gap-2 mb-4">
+                    <div class="flex items-center gap-2">
+                      <svg class="ic w-4 h-4 text-indigo-600 shrink-0"><use href="#i-grid9"></use></svg>
+                      <span class="lbl">Salary band geometry — spread &amp; inter-level overlap</span>
+                    </div>
+                    <span class="text-[10px] mono text-slate-400">% OF MARKET MIDPOINT</span>
+                  </div>
+                  <!-- Band A: Level III -->
+                  <div class="mb-1.5 flex items-center justify-between text-[11px]">
+                    <span class="font-semibold text-slate-700">Level III — incumbent band</span>
+                    <span class="mono text-slate-400">80% – 120%</span>
+                  </div>
+                  <div class="relative h-8 rounded-lg bg-slate-100 border border-slate-200/70 overflow-hidden">
+                    <div class="absolute inset-y-1 left-[13.33%] right-[33.33%] rounded bg-indigo-500"></div>
+                    <div class="absolute inset-y-0 left-[40%] w-[2px] bg-amber-400"></div>
+                  </div>
+                  <div class="relative h-5 text-[10px] mono text-slate-500">
+                    <span class="absolute left-[13.33%] -translate-x-1/2 whitespace-nowrap">Min 80%</span>
+                    <span class="absolute left-[40%] -translate-x-1/2 whitespace-nowrap font-bold text-amber-600">Mid 100%</span>
+                    <span class="absolute left-[66.67%] -translate-x-1/2 whitespace-nowrap">Max 120%</span>
+                  </div>
+                  <!-- Band B: Level IV with overlap -->
+                  <div class="mt-3 mb-1.5 flex items-center justify-between text-[11px]">
+                    <span class="font-semibold text-slate-700">Level IV — next band</span>
+                    <span class="mono text-slate-400">100% – 140%</span>
+                  </div>
+                  <div class="relative h-8 rounded-lg bg-slate-100 border border-slate-200/70 overflow-hidden">
+                    <div class="absolute inset-y-1 left-[40%] right-[6.67%] rounded bg-sky-500"></div>
+                    <div class="absolute inset-y-0 left-[66.67%] w-[2px] bg-amber-400"></div>
+                    <div class="absolute inset-y-1 left-[40%] w-[26.67%] rounded bg-amber-400/70 border border-amber-600"></div>
+                  </div>
+                  <div class="relative h-5 text-[10px] mono text-slate-500">
+                    <span class="absolute left-[40%] -translate-x-1/2 whitespace-nowrap">Min 100%</span>
+                    <span class="absolute left-[66.67%] -translate-x-1/2 whitespace-nowrap font-bold text-amber-600">Mid 120%</span>
+                    <span class="absolute left-[93.33%] -translate-x-1/2 whitespace-nowrap">Max 140%</span>
+                  </div>
+                  <!-- Legend -->
+                  <div class="mt-3 pt-3 border-t border-slate-100 flex flex-wrap gap-x-4 gap-y-1.5 text-[11px] text-slate-500">
+                    <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded-sm bg-indigo-500"></span>Level III spread ±20%</span>
+                    <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded-sm bg-sky-500"></span>Level IV spread</span>
+                    <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded-sm bg-amber-400/70 border border-amber-600"></span>Overlap 100–120% — promotion runway, not double-reward</span>
+                  </div>
+                </div>
+                <!-- EP02 · Merit matrix × compa-ratio quartile -->
+                <div class="rounded-xl border border-slate-200 bg-white overflow-hidden">
+                  <div class="px-4 py-3 border-b border-slate-200 bg-slate-50/70 flex items-center gap-2">
+                    <svg class="ic w-4 h-4 text-indigo-600 shrink-0"><use href="#i-grid9"></use></svg>
+                    <span class="text-[13px] font-bold text-slate-800">Merit matrix — performance rating × compa-ratio quartile</span>
+                  </div>
+                  <div class="overflow-x-auto">
+                    <table class="w-full text-sm min-w-[560px]">
+                      <thead><tr class="bg-slate-900 text-slate-300 text-[11px] uppercase tracking-wider">
+                        <th class="text-left font-semibold px-3 py-2.5">Performance</th>
+                        <th class="text-center font-semibold px-3 py-2.5">Q1 · &lt; 90%</th>
+                        <th class="text-center font-semibold px-3 py-2.5">Q2 · 90–100%</th>
+                        <th class="text-center font-semibold px-3 py-2.5">Q3 · 100–110%</th>
+                        <th class="text-center font-semibold px-3 py-2.5">Q4 · &gt; 110%</th>
+                      </tr></thead>
+                      <tbody class="divide-y divide-slate-100 bg-white">
+                        <tr><td class="px-3 py-2.5 font-semibold text-slate-800">Exceeds</td><td class="px-3 py-2.5 text-center mono font-bold text-emerald-700 bg-emerald-50">6.5%</td><td class="px-3 py-2.5 text-center mono font-bold text-emerald-700 bg-emerald-50">6.0%</td><td class="px-3 py-2.5 text-center mono font-bold text-emerald-800">5.0%</td><td class="px-3 py-2.5 text-center mono font-semibold text-amber-700">4.0%</td></tr>
+                        <tr><td class="px-3 py-2.5 font-semibold text-slate-800">Meets+</td><td class="px-3 py-2.5 text-center mono font-bold text-emerald-800">5.0%</td><td class="px-3 py-2.5 text-center mono font-semibold text-amber-700">4.5%</td><td class="px-3 py-2.5 text-center mono font-semibold text-amber-700">3.5%</td><td class="px-3 py-2.5 text-center mono text-slate-500">2.5%</td></tr>
+                        <tr><td class="px-3 py-2.5 font-semibold text-slate-800">Meets</td><td class="px-3 py-2.5 text-center mono font-semibold text-amber-700">4.0%</td><td class="px-3 py-2.5 text-center mono font-semibold text-amber-700">3.5%</td><td class="px-3 py-2.5 text-center mono text-slate-500">2.5%</td><td class="px-3 py-2.5 text-center mono text-slate-500">1.5%</td></tr>
+                        <tr><td class="px-3 py-2.5 font-semibold text-slate-800">Developing</td><td class="px-3 py-2.5 text-center mono text-slate-500">2.0%</td><td class="px-3 py-2.5 text-center mono text-slate-500">1.5%</td><td class="px-3 py-2.5 text-center mono text-slate-400">0.0%</td><td class="px-3 py-2.5 text-center mono text-slate-400">0.0%</td></tr>
+                      </tbody>
+                    </table>
+                  </div>
+                  <p class="px-4 py-3 border-t border-slate-100 text-[11.5px] text-slate-500 leading-relaxed">
+                    Compa-ratio = salary ÷ band midpoint. Budget flows to <strong class="text-slate-700">Q1 incumbents</strong> first — the grid, not the individual increase, is the unit of control; a fully-booked matrix that overspends is re-cut before announcements, never after.
+                  </p>
+                </div>
+              </template>
+
+              <template v-else>
+                <!-- EP03 · M&A cutover timeline -->
+                <div class="rounded-xl border border-slate-200 bg-white p-4 sm:p-5 mb-4">
+                  <div class="flex items-center gap-2 mb-4">
+                    <svg class="ic w-4 h-4 text-indigo-600 shrink-0"><use href="#i-clock"></use></svg>
+                    <span class="lbl">M&amp;A integration cutover timeline</span>
+                  </div>
+                  <ol class="relative border-l-2 border-slate-200 sm:border-l-0 sm:border-t-2 ml-4 sm:ml-0 sm:pt-6 space-y-6 sm:space-y-0 sm:grid sm:grid-cols-3 sm:gap-4">
+                    <li class="relative pl-5 sm:pl-0 sm:pt-0">
+                      <span class="absolute -left-[10px] top-0.5 sm:left-0 sm:-top-[31px] w-4 h-4 rounded-full bg-slate-900 border-2 border-white shadow-xs"></span>
+                      <div class="text-[10px] font-bold mono text-slate-400 uppercase">T-30 → T-0</div>
+                      <div class="text-[13.5px] font-bold text-slate-900 mt-0.5 leading-tight">Pre-Close Due Diligence</div>
+                      <p class="text-[12px] text-slate-500 mt-1 leading-snug">Comp liabilities, retention risk and works-council exposure quantified before signing — or they surface on Day 1.</p>
+                    </li>
+                    <li class="relative pl-5 sm:pl-0 sm:pt-0">
+                      <span class="absolute -left-[10px] top-0.5 sm:left-0 sm:-top-[31px] w-4 h-4 rounded-full bg-amber-500 border-2 border-white shadow-xs"></span>
+                      <div class="text-[10px] font-bold mono text-amber-600 uppercase">Day 1</div>
+                      <div class="text-[13.5px] font-bold text-slate-900 mt-0.5 leading-tight">TSA Cutover</div>
+                      <p class="text-[12px] text-slate-500 mt-1 leading-snug">Every HR service runs as a countdown with an owner and an exit date — a TSA is a clock, not a state.</p>
+                    </li>
+                    <li class="relative pl-5 sm:pl-0 sm:pt-0">
+                      <span class="absolute -left-[10px] top-0.5 sm:left-0 sm:-top-[31px] w-4 h-4 rounded-full bg-emerald-500 border-2 border-white shadow-xs"></span>
+                      <div class="text-[10px] font-bold mono text-emerald-600 uppercase">Month 18</div>
+                      <div class="text-[13.5px] font-bold text-slate-900 mt-0.5 leading-tight">Schema Harmonisation</div>
+                      <p class="text-[12px] text-slate-500 mt-1 leading-snug">One job architecture, one worker model, one audit history — the interim bridges are dismantled.</p>
+                    </li>
+                  </ol>
+                </div>
+                <div class="grid lg:grid-cols-2 gap-4">
+                  <!-- EP03 · 4/5ths validation -->
+                  <div class="rounded-xl border border-slate-200 bg-white overflow-hidden">
+                    <div class="px-4 py-3 border-b border-slate-200 bg-slate-50/70 flex items-center gap-2">
+                      <svg class="ic w-4 h-4 text-indigo-600 shrink-0"><use href="#i-check"></use></svg>
+                      <span class="text-[13px] font-bold text-slate-800">4/5ths Rule — disparate impact validation</span>
+                    </div>
+                    <div class="p-4 space-y-3">
+                      <div class="rounded-lg bg-slate-50 border border-slate-200/70 p-3 mono text-[12px] text-slate-700 space-y-1">
+                        <div class="flex justify-between"><span class="text-slate-500">Protected group</span><span class="font-semibold">12 / 120 = 10.0%</span></div>
+                        <div class="flex justify-between"><span class="text-slate-500">Majority group</span><span class="font-semibold">90 / 600 = 15.0%</span></div>
+                        <div class="flex justify-between border-t border-slate-200 pt-1"><span class="text-slate-500">Impact ratio</span><span class="font-bold text-rose-700">0.67 &lt; 0.80 — FAIL</span></div>
+                      </div>
+                      <ul class="space-y-2">
+                        <li class="flex items-start gap-2 text-[12.5px] leading-snug text-slate-700"><svg class="ic w-4 h-4 text-emerald-600 shrink-0 mt-0.5"><use href="#i-check"></use></svg><span>Selection rates computed per job group from the ATS table of record.</span></li>
+                        <li class="flex items-start gap-2 text-[12.5px] leading-snug text-slate-700"><svg class="ic w-4 h-4 text-rose-600 shrink-0 mt-0.5"><use href="#i-alert"></use></svg><span>Ratio 0.67 fails the 0.80 gate — hiring stops pending requirement review.</span></li>
+                        <li class="flex items-start gap-2 text-[12.5px] leading-snug text-slate-700"><svg class="ic w-4 h-4 text-emerald-600 shrink-0 mt-0.5"><use href="#i-check"></use></svg><span>Non-job-related screen items removed; re-run yields <span class="mono font-semibold">0.83</span> — cleared.</span></li>
+                        <li class="flex items-start gap-2 text-[12.5px] leading-snug text-slate-700"><svg class="ic w-4 h-4 text-emerald-600 shrink-0 mt-0.5"><use href="#i-check"></use></svg><span>Evidence package retained for the EEO-aligned audit file before notices issue.</span></li>
+                      </ul>
+                    </div>
+                  </div>
+                  <!-- EP03 · EU AI Act high-risk flow -->
+                  <div class="rounded-xl border border-slate-200 bg-white overflow-hidden">
+                    <div class="px-4 py-3 border-b border-slate-200 bg-slate-50/70 flex items-center gap-2">
+                      <svg class="ic w-4 h-4 text-indigo-600 shrink-0"><use href="#i-key"></use></svg>
+                      <span class="text-[13px] font-bold text-slate-800">EU AI Act — high-risk workforce tooling</span>
+                    </div>
+                    <div class="p-4">
+                      <ol class="space-y-2.5">
+                        <li class="flex items-start gap-3">
+                          <span class="w-5 h-5 rounded-md bg-slate-900 text-white grid place-items-center text-[10px] font-bold mono shrink-0 mt-0.5">1</span>
+                          <div class="min-w-0"><span class="text-[12.5px] font-semibold text-slate-800">Classify</span> <span class="text-[12.5px] text-slate-500">— recruitment &amp; progression tools presumed high-risk (Art. 6).</span></div>
+                        </li>
+                        <li class="flex items-start gap-3">
+                          <span class="w-5 h-5 rounded-md bg-slate-900 text-white grid place-items-center text-[10px] font-bold mono shrink-0 mt-0.5">2</span>
+                          <div class="min-w-0"><span class="text-[12.5px] font-semibold text-slate-800">Data governance</span> <span class="text-[12.5px] text-slate-500">— training &amp; input data examined for bias (Art. 10).</span></div>
+                        </li>
+                        <li class="flex items-start gap-3">
+                          <span class="w-5 h-5 rounded-md bg-slate-900 text-white grid place-items-center text-[10px] font-bold mono shrink-0 mt-0.5">3</span>
+                          <div class="min-w-0"><span class="text-[12.5px] font-semibold text-slate-800">Human oversight</span> <span class="text-[12.5px] text-slate-500">— a named reviewer can override any automated outcome (Art. 14).</span></div>
+                        </li>
+                        <li class="flex items-start gap-3">
+                          <span class="w-5 h-5 rounded-md bg-slate-900 text-white grid place-items-center text-[10px] font-bold mono shrink-0 mt-0.5">4</span>
+                          <div class="min-w-0"><span class="text-[12.5px] font-semibold text-slate-800">Logging</span> <span class="text-[12.5px] text-slate-500">— automatic records kept for six months (Art. 12).</span></div>
+                        </li>
+                        <li class="flex items-start gap-3">
+                          <span class="w-5 h-5 rounded-md bg-amber-500 text-slate-900 grid place-items-center shrink-0 mt-0.5"><svg class="ic w-3 h-3"><use href="#i-check"></use></svg></span>
+                          <div class="min-w-0"><span class="text-[12.5px] font-semibold text-slate-800">Disclosure + ledger</span> <span class="text-[12.5px] text-slate-500">— workers informed, succession logged to the SEC Reg S-K ledger.</span></div>
+                        </li>
+                      </ol>
+                    </div>
+                  </div>
+                </div>
+              </template>
+            </div>
+
             <!-- ============ ACADEMY CONTENT + UTILITY WORKBENCH (dual pane) ============ -->
-            <div class="min-w-0 p-4 sm:p-6 lg:p-8 grid xl:grid-cols-[minmax(0,68fr)_minmax(0,32fr)] gap-6 xl:gap-7 items-start">
+            <div v-show="activeCourse===1" class="min-w-0 p-4 sm:p-6 lg:p-8 grid xl:grid-cols-[minmax(0,68fr)_minmax(0,32fr)] gap-6 xl:gap-7 items-start">
           <article class="min-w-0">
             <!-- Module header -->
             <div class="mb-6 pb-5 border-b border-slate-200">
@@ -5042,6 +5421,52 @@
     </div>
   </transition>
 
+  <!-- ================= COURSE 2 UNLOCK CEREMONY (zero-teaser reveal) — spec message, zero emoji ================= -->
+  <transition name="modal">
+    <div v-if="course2RevealOpen" class="fixed inset-0 z-[69] grid place-items-center p-4 overflow-y-auto no-print" role="dialog" aria-modal="true" aria-label="Executive Masterclass unlocked">
+      <div class="absolute inset-0 bg-slate-900/80" @click="course2RevealOpen=false"></div>
+      <div class="relative bg-white rounded-2xl shadow-2xl w-full max-w-lg overflow-hidden my-auto">
+        <div class="bg-slate-900 px-5 pt-7 pb-6 text-center relative overflow-hidden">
+          <div class="absolute inset-0 opacity-[0.07] bg-[radial-gradient(circle_at_50%_0%,#fbbf24_0%,transparent_60%)]" aria-hidden="true"></div>
+          <div class="relative">
+            <!-- Graduation-cap line art over a gold seal — SVG only, zero raw emoji -->
+            <svg viewBox="0 0 96 96" class="w-16 h-16 mx-auto" fill="none" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <circle cx="48" cy="48" r="34" stroke="#fbbf24" stroke-width="2" stroke-dasharray="4 5"/>
+              <path d="M20 40 48 28l28 12-28 12z" stroke="#fbbf24" stroke-width="3"/>
+              <path d="M32 46v14c0 4 7 8 16 8s16-4 16-8V46" stroke="#d97706" stroke-width="3"/>
+              <path d="M76 40v14" stroke="#fbbf24" stroke-width="3"/>
+              <circle cx="76" cy="57" r="3" fill="#fbbf24" stroke="#fbbf24" stroke-width="2"/>
+            </svg>
+            <div class="mt-2.5 inline-flex items-center gap-2 rounded-full bg-amber-500/15 border border-amber-500/40 px-3.5 py-1 text-[11px] font-bold text-amber-300">
+              <svg class="ic w-3.5 h-3.5"><use href="#i-award"></use></svg>
+              <span class="mono">MILESTONE ACHIEVED</span>
+            </div>
+            <h2 class="mt-3 text-lg font-bold text-white tracking-wide">Foundational Certification Complete!</h2>
+            <p class="text-[13px] text-slate-300 mt-2 leading-relaxed max-w-md mx-auto">
+              You have unlocked the <strong class="text-amber-300">Executive Masterclass (Course 2)</strong> —
+              three audio-only executive briefings now appear in your curriculum, playable on demand from the course switcher above.
+            </p>
+            <div class="mt-3 flex items-center justify-center gap-2 text-[11px] text-slate-400">
+              <span class="mono">10 / 10 MODULES CLEARED</span>
+              <span class="w-1 h-1 rounded-full bg-slate-600"></span>
+              <span class="mono">3 EPISODES LIVE</span>
+            </div>
+          </div>
+        </div>
+        <div class="px-5 py-4 bg-slate-50 border-t border-slate-200 flex flex-wrap justify-end gap-2">
+          <button type="button" @click="course2RevealOpen=false"
+            class="h-10 px-4 rounded-lg border border-slate-300 text-slate-600 text-xs font-semibold hover:bg-white transition cursor-pointer">
+            Stay on Course 1
+          </button>
+          <button type="button" @click="setActiveCourse(2); course2RevealOpen=false"
+            class="h-10 px-4 rounded-lg bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold flex items-center gap-1.5 transition cursor-pointer">
+            <svg class="ic w-4 h-4 text-amber-400"><use href="#i-volume"></use></svg>Enter the Masterclass
+          </button>
+        </div>
+      </div>
+    </div>
+  </transition>
+
   <!-- ================= DANGER ZONE — TWO-STEP DATABASE RESET (spec §10 E) ================= -->
   <transition name="modal">
     <div v-if="resetOpen" class="fixed inset-0 z-[68] grid place-items-center p-4 overflow-y-auto no-print" role="dialog" aria-modal="true" aria-label="Reset demo database">
@@ -5693,6 +6118,82 @@ var ACADEMY_AUDIO = {
   9: 'assets/audio/module-09-hris-as-the-authoritative-identity-root.m4a',
   10: 'assets/audio/module-10-predicting-when-your-employees-will-quit.m4a'
 };
+
+/* ============================ COURSE 2 — EXECUTIVE AUDIO MASTERCLASS ============================
+   Surprises-in-imperative: these constants are INERT unless the learner has cleared all 10
+   Course 1 modules (localStorage flag `peoplecore_course2_unlocked`). Zero markup references
+   them before the unlock gate opens, so a fresh session renders no Course 2 trace at all. */
+var COURSE2_RELEASE_TAG = 'course2-v1';
+var COURSE2_BASE = 'https://github.com/NitishKashyapR/peoplecore-hris-sandbox/releases/download/' + COURSE2_RELEASE_TAG + '/';
+var COURSE2_RAW_BASE = 'https://raw.githubusercontent.com/NitishKashyapR/peoplecore-hris-sandbox/main/';
+var COURSE2_PAGES_BASE = 'https://nitishkashyapr.github.io/peoplecore-hris-sandbox/';
+var COURSE2_LS_FLAG = 'peoplecore_course2_unlocked';
+/* Relative paths — the offline / file:// fallback tier. */
+var COURSE2_AUDIO = {
+  1: 'assets/audio/course2-module01-architecting-enterprise-hris-without-operational-meltdowns.m4a',
+  2: 'assets/audio/course2-module02-mathematical-rigor-in-headcount-and-compensation.m4a',
+  3: 'assets/audio/course2-module03-workforce-engineering-for-the-global-boardroom.m4a'
+};
+/* Hosted tier per track (verified 200 on 2026-10-01):
+   01/02 -> GitHub Pages (serves audio/mp4 MIME); 03 -> release asset (over GitHub's 100 MB
+   in-repo limit, serves application/octet-stream which browsers content-sniff). */
+/* Episode schema — executive overview + key takeaways per track. */
+var COURSE2 = [
+  {
+    n: 1,
+    title: 'Architecting Enterprise HRIS Without Operational Meltdowns',
+    duration: '22:33',
+    summary: 'Deconstructs Monolith HCM suites vs. Best-of-Breed microservices, SCIM identity provisioning, point-in-time temporal table tracking, and avoiding the "lift-and-shift" anti-pattern.',
+    context: 'Boards approve HRIS programs on feature matrices and then live with them on integration reality. This briefing frames the architecture decision as a question of where complexity is allowed to live: inside a single vendor\u2019s release train, or inside an event fabric you control. The stakes compound with every acquired entity, every new payroll country and every identity change \u2014 each one either flows through a designed pipeline or becomes manual work with an audit trail nobody owns. The lift-and-shift anti-pattern is treated here as a capital-allocation error, not a technical one.',
+    takeaways: [
+      'Monolith HCM vs. Best-of-Breed: weigh integration surface, upgrade cadence and exit cost before you commit to a suite.',
+      'SCIM provisioning keeps the identity graph authoritative — HR joins and leavers must drive the directory, never the reverse.',
+      'Temporal tables record every effective-dated change so headcount at any past date is a query, not an archaeology project.',
+      'Lift-and-shift replays yesterday\u2019s process on new plumbing; re-architect the workflow or you have bought latency, not leverage.'
+    ]
+  },
+  {
+    n: 2,
+    title: 'Mathematical Rigor in Headcount and Compensation',
+    duration: '20:47',
+    summary: 'Deep dive into salary band geometry, spread mechanics, compa-ratios, range penetration, dynamic merit matrices, EU pay transparency directives, and FP&A fully-loaded headcount modeling.',
+    context: 'Compensation philosophy becomes real only when it survives arithmetic. This briefing treats the salary band as a geometric object \u2014 spread, penetration, compa-ratio \u2014 and shows why quartile position, not tenure or negotiation, should drive merit allocation. Under the EU pay-transparency regime the same numbers stop being internal opinion and become publishable disclosure, so the math you can defend is the math you can publish. Fully-loaded FP&A modelling closes the loop by pricing headcount the way finance actually books it.',
+    takeaways: [
+      'Band spread and compa-ratio together explain who is underpaid — either metric alone hides the tail.',
+      'Range penetration surfaces incumbents stuck at the floor; promote or re-band before the market does it for you.',
+      'Merit matrices must be budgeted as a whole: the grid, not the individual increase, is the unit of control.',
+      'EU pay transparency turns band hygiene into a legal surface; fully-loaded FP&A models price headcount including burden, not salary alone.'
+    ]
+  },
+  {
+    n: 3,
+    title: 'Workforce Engineering for the Global Boardroom',
+    duration: '59:00',
+    summary: 'Capstone executive debrief covering M&A people operations due diligence, Day 1 TSA cutovers, algorithmic disparate impact defense (4/5ths rule) during restructurings, EU AI Act workforce governance, and SEC Reg S-K board succession ledgers.',
+    context: 'Post-close, workforce integration is the critical path: identity, pay and compliance systems must converge while the TSA clock is already running. This capstone walks the M&A people timeline from pre-close diligence to month-18 schema harmonisation, then stress-tests restructuring decisions against the 4/5ths rule and the EU AI Act\u2019s high-risk obligations. The through-line is evidentiary \u2014 board-grade documentation or board-level exposure: succession ledgers, selection-rate records and model logs either exist before the regulator asks or they do not exist at all.',
+    takeaways: [
+      'M&A diligence on people: comp liabilities, retention risk and works-council exposure surface before Day 1 or never.',
+      'TSA cutovers are a countdown, not a state — every HR service needs an exit date and an owner on the timeline.',
+      '4/5ths rule evidence must exist before a restructuring, generated from the same data auditors will request.',
+      'EU AI Act classification and SEC Reg S-K succession ledgers turn board-level workforce oversight into a documented control.'
+    ]
+  }
+];
+/* Hosted-first URL resolver: HTTP/HTTPS → GitHub-hosted asset; file:// / offline → relative path.
+   The player layer adds a runtime error fallback from hosted → local, so a cold CDN or a
+   blocked network degrades seamlessly instead of dead-ending the track. */
+function course2AudioSrc(n, preferLocal) {
+  var rel = COURSE2_AUDIO[n];
+  if (!rel) return '';
+  if (preferLocal) return rel;
+  var onHttp = (typeof location !== 'undefined') &&
+    (location.protocol === 'http:' || location.protocol === 'https:');
+  if (!onHttp) return rel; /* file:// and other offline contexts resolve locally */
+  var file = rel.split('/').pop();
+  if (n === 3) return COURSE2_BASE + file; /* >100 MB — release asset only */
+  return COURSE2_PAGES_BASE + rel; /* MIME-correct audio/mp4 */
+}
+
 /* Statutory inspector — governing codes per academy module × active regime */
 var STATUTORY = {
   1: {
@@ -7460,6 +7961,15 @@ var App = {
       certForm: { name: '', track: 'Enterprise HRIS Architecture & Global Workforce Operations' },
       /* academy celebration (spec §10) */
       celebrateOpen: false, celebrateName: '', celebrateTrack: CERT_TRACKS[0],
+      /* Course 2 — Executive Audio Masterclass (zero-teaser unlock gate) */
+      activeCourse: 1,
+      course2Unlocked: (function () {
+        try { return localStorage.getItem(COURSE2_LS_FLAG) === '1'; } catch (err) { return false; }
+      })(),
+      course2RevealOpen: false, /* one-time unlock ceremony modal */
+      course2RevealShown: false, /* suppress repeat ceremony within the session */
+      course2RevealPending: false, /* ceremony queued behind the 10/10 celebration modal */
+      activeEpisode: 1,
       /* sandbox drawer & navigation */
       isSandboxDrawerOpen: false,
       isSandboxSidebarCollapsed: false,
@@ -7518,6 +8028,7 @@ var App = {
       toasts: [],
       /* constant passthroughs for the template */
       modules: MODULES, academy: ACADEMY, roleDefs: ROLE_DEFS, stages: STAGES,
+      course2Episodes: COURSE2,
       weekDays: WEEK_DAYS, values: VALUES, leaveTypes: LEAVE_TYPES, hubTabs: HUB_TABS,
       bandLevels: BAND_LEVELS,
       templateSpec: TEMPLATE_SPEC, exportOptions: EXPORT_OPTIONS, saasApps: SAAS_APPS,
@@ -7538,7 +8049,10 @@ var App = {
     currentAcademy: function () { return ACADEMY[this.db.am - 1] || ACADEMY[0]; },
     contextLabel: function () {
       if (this.db.tab === 'settings') return 'Settings · Platform Preferences';
-      if (this.db.mode === 'academy') return 'HR Academy · Module ' + this.db.am;
+      if (this.db.mode === 'academy') {
+        if (this.course2Unlocked && this.activeCourse === 2) return 'HR Academy · Course 2 · EP 0' + this.activeEpisode;
+        return 'HR Academy · Module ' + this.db.am;
+      }
       var m = this.currentModule;
       return m ? ('Module 0' + m.n + ' · ' + m.label) : 'Unknown module';
     },
@@ -7546,6 +8060,14 @@ var App = {
       var c = 0;
       for (var k in this.db.academyDone) { if (this.db.academyDone[k]) c++; }
       return c;
+    },
+    /* Foundational completion gate — Course 2 may only exist once this is TRUE */
+    isCourse1Complete: function () {
+      return !!(this.db.academyDone && this.academyDoneCount >= 10);
+    },
+    /* Active episode in the Course 2 studio (master-detail: sidebar = playlist) */
+    currentEpisode: function () {
+      return this.course2Episodes[this.activeEpisode - 1] || this.course2Episodes[0];
     },
     assetMissing: function () {
       return this.assetCheck.checks.filter(function (c) { return !c.ok; });
@@ -8452,6 +8974,18 @@ var App = {
       this.profileMode = 'view';
       this.profileAction = '';
       this.transferTarget = '';
+    },
+    /* Foundational gate crossing → one-time Course 2 unlock ceremony (queued behind the
+       existing 10/10 celebration modal so the two never collide). */
+    isCourse1Complete: function (now) {
+      if (now && !this.course2Unlocked) this.unlockCourse2(true);
+    },
+    celebrateOpen: function (open) {
+      if (!open && this.course2RevealPending) {
+        this.course2RevealPending = false;
+        var self = this;
+        this.$nextTick(function () { self.course2RevealOpen = true; self.course2RevealShown = true; });
+      }
     }
   },
 
@@ -8539,11 +9073,13 @@ var App = {
     setMode: function (m) {
       /* Leaving the Settings surface on an explicit engine switch (spec §10) */
       if (m !== this.db.mode && this.db.tab === 'settings') this.db.tab = 'overview';
+      this.pauseAllAudio(); /* audio lifecycle — no cross-engine collisions */
       this.db.mode = m;
       this.isAcademyDrawerOpen = false;
       this.isSandboxDrawerOpen = false;
     },
     setTab: function (t) {
+      this.pauseAllAudio(); /* audio lifecycle — tab change stops narration */
       this.db.tab = t;
       this.searchOpen = false;
       if (t === 'audit') this.db.track.auditInspected = true;
@@ -8803,6 +9339,11 @@ var App = {
       this.certOpen = false; this.certModal = false; this.certEditing = false;
       this.certLockOpen = false; this.certLockStep = 1;
       this.celebrateOpen = false; this.certForm.name = ''; this.certForm.track = CERT_TRACKS[0];
+      /* Course 2 returns to its zero-teaser gate — 0/10 can never keep the masterclass */
+      this.course2Unlocked = false; this.activeCourse = 1; this.activeEpisode = 1;
+      this.course2RevealOpen = false; this.course2RevealShown = false; this.course2RevealPending = false;
+      try { localStorage.removeItem(COURSE2_LS_FLAG); } catch (err) { /* storage unavailable */ }
+      this.pauseAllAudio();
       this.auditType = ''; this.auditQuery = ''; this.dirQ = ''; this.globalQuery = '';
       this.timeEmpId = this.db.roleActorId;
       /* 2 — security audit event on the freshly seeded store */
@@ -9665,6 +10206,8 @@ var App = {
         this.toast('warn', 'Module ' + n + ' is locked — clear Module ' + (n - 1) + ' at 8/10 or better to continue.');
         return;
       }
+      this.pauseAllAudio(); /* audio lifecycle — module switch stops playback */
+      this.activeCourse = 1; /* a Course 1 jump always returns the view to Course 1 */
       this.db.am = n;
       if (typeof window !== 'undefined' && window.innerWidth < 1024) {
         this.closeAcademyDrawer();
@@ -9721,6 +10264,48 @@ var App = {
         this.toast('ok', 'Curriculum completed — 10/10 flight-checks cleared.');
       } else {
         this.toast('ok', 'Module ' + n + ' complete — ' + count + '/10 cleared.');
+      }
+    },
+    /* ---------------- Course 2 — Executive Audio Masterclass ---------------- */
+    /* Zero-teaser gate: nothing below runs — and nothing below is rendered — until the
+       foundational completion gate opens. The reveal flag persists across refreshes. */
+    unlockCourse2: function (withCeremony) {
+      if (this.course2Unlocked) return;
+      this.course2Unlocked = true;
+      try { localStorage.setItem(COURSE2_LS_FLAG, '1'); } catch (err) { /* storage unavailable */ }
+      this.logEvent('COURSE2_UNLOCKED', 'Executive Masterclass (Course 2) revealed after 10/10 foundational completion', {
+        modules: this.academyDoneCount, course: 2, episodes: COURSE2.length
+      });
+      if (withCeremony && !this.course2RevealShown) {
+        if (this.celebrateOpen) {
+          this.course2RevealPending = true; /* wait for the certification modal to close */
+        } else {
+          this.course2RevealOpen = true;
+          this.course2RevealShown = true;
+        }
+      }
+    },
+    setActiveCourse: function (c) {
+      if (c === 1) {
+        this.pauseAllAudio();
+        this.activeCourse = 1;
+        return;
+      }
+      if (c !== 2 || !this.course2Unlocked) return; /* hard zero-teaser safeguard */
+      this.pauseAllAudio();
+      this.activeCourse = 2;
+    },
+    gotoEpisode: function (n) {
+      if (!this.course2Unlocked || n < 1 || n > COURSE2.length) return;
+      this.pauseAllAudio(); /* never let two tracks collide */
+      this.activeEpisode = n;
+      if (typeof window !== 'undefined' && window.innerWidth < 1024) this.closeAcademyDrawer();
+    },
+    pauseAllAudio: function () {
+      if (typeof document === 'undefined') return;
+      var tracks = document.querySelectorAll('audio');
+      for (var i = 0; i < tracks.length; i++) {
+        try { tracks[i].pause(); } catch (err) { /* detached node */ }
       }
     },
     /* ---------------- academy celebration (spec §10) ---------------- */
@@ -9920,6 +10505,37 @@ var App = {
     document.documentElement.classList.toggle('dense', this.density === 'compact');
     this.verifyAssets();
     this.$nextTick(function () { self.renderCharts(); });
+    /* Course 2 zero-teaser gate — sync reveal state on boot:
+       a learner who already cleared 10/10 (flag never written) unlocks here, once. */
+    if (this.isCourse1Complete && !this.course2Unlocked) {
+      this.$nextTick(function () { self.unlockCourse2(true); });
+    }
+    /* Developer debug helper — instantaneous Course 2 review without clicking 10 modules. */
+    window.__unlockCourse2Test = function () {
+      if (!self.course2Unlocked) {
+        self.unlockCourse2(false);
+        self.course2RevealShown = false;
+      }
+      self.course2RevealOpen = false;
+      self.db.mode = 'academy';
+      self.activeCourse = 2;
+      self.activeEpisode = 1;
+      self.toast('ok', 'Course 2 unlocked for testing — Executive Audio Masterclass ready.');
+      return { unlocked: true, activeCourse: self.activeCourse, episodes: COURSE2.length };
+    };
+    window.__lockCourse2Test = function () {
+      self.course2Unlocked = false;
+      self.course2RevealOpen = false;
+      self.course2RevealShown = false;
+      self.activeCourse = 1;
+      self.activeEpisode = 1;
+      try { localStorage.removeItem(COURSE2_LS_FLAG); } catch (err) { /* storage unavailable */ }
+      return { unlocked: false };
+    };
+    /* Audio lifecycle — tab visibility loss pauses every track */
+    document.addEventListener('visibilitychange', function () {
+      if (document.hidden) self.pauseAllAudio();
+    });
     window.addEventListener('keydown', function (e) {
       if (e.key === 'Escape' && self.isAcademyDrawerOpen) {
         self.closeAcademyDrawer();
@@ -10270,10 +10886,207 @@ var ModuleAudio = {
     '</div>'
 };
 
+/* ------------------------------------------------------- course 2 audio player */
+/* Executive Audio Masterclass player — HTML5 <audio> with audio/mp4 MIME, hosted-first
+   source with automatic local fallback, scrub + speed + volume controls and a chapter
+   card (episode badge, title, executive overview, key takeaways). */
+var Course2Player = {
+  props: { n: { type: Number, required: true } },
+  data: function () {
+    return { playing: false, cur: 0, dur: 0, failed: false, rate: 1, volume: 1, localFallback: false };
+  },
+  computed: {
+    ep: function () { return COURSE2[this.n - 1] || COURSE2[0]; },
+    hostedSrc: function () { return course2AudioSrc(this.n, false); },
+    localSrc: function () { return course2AudioSrc(this.n, true); },
+    activeTrackUrl: function () { return this.localFallback ? this.localSrc : this.hostedSrc; },
+    progress: function () { return this.dur > 0 ? Math.min(1, this.cur / this.dur) : 0; },
+    durMax: function () { return Math.round(this.dur); },
+    curNow: function () { return Math.round(this.cur); },
+    epBadge: function () { return 'EP ' + (this.n < 10 ? '0' : '') + this.n; },
+    /* deterministic speech-like waveform, one shape per episode (Course 1 narrator pattern) */
+    bars: function () {
+      var seed = ((this.n + 31) * 7919 + 104729) % 2147483647;
+      if (seed <= 0) seed += 2147483646;
+      var out = [];
+      for (var i = 0; i < 40; i++) {
+        seed = (seed * 16807) % 2147483647;
+        var r = seed / 2147483647;
+        var env = 0.40 + 0.60 * Math.abs(Math.sin(i / 4.7 + this.n * 2.1));
+        out.push(Math.max(16, Math.min(100, Math.round(20 + env * r * 80))));
+      }
+      return out;
+    },
+    ariaLabel: function () {
+      return (this.playing ? 'Pause' : 'Play') + ' executive masterclass episode ' + this.n;
+    },
+    sourceNote: function () {
+      if (this.failed) return '';
+      return this.localFallback ? 'Local asset (offline tier)' : 'Streaming from repository asset';
+    }
+  },
+  watch: {
+    n: function () {
+      /* Episode switch — hard reset, never inherit playback state across tracks */
+      this.playing = false; this.cur = 0; this.dur = 0;
+      this.failed = false; this.localFallback = false;
+      var a = this.$refs.a;
+      if (a) { try { a.pause(); a.currentTime = 0; a.load(); } catch (err) { /* detached */ } }
+    },
+    rate: function (v) {
+      var a = this.$refs.a;
+      if (a) a.playbackRate = v;
+    },
+    volume: function (v) {
+      var a = this.$refs.a;
+      if (a) a.volume = Math.max(0, Math.min(1, v));
+    }
+  },
+  methods: {
+    fmt: function (s) {
+      if (!isFinite(s) || s <= 0) return '0:00';
+      var m = Math.floor(s / 60), r = Math.floor(s % 60);
+      return m + ':' + (r < 10 ? '0' : '') + r;
+    },
+    barClass: function (i) {
+      return ((i + 1) / this.bars.length <= this.progress) ? 'bg-indigo-500' : 'bg-slate-200';
+    },
+    barStyle: function (i) { return { height: this.bars[i] + '%' }; },
+    toggle: function () {
+      var a = this.$refs.a;
+      if (!a || this.failed) return;
+      if (a.paused) {
+        var p = a.play();
+        if (p && typeof p.catch === 'function') p.catch(function () { /* autoplay policy */ });
+      } else {
+        a.pause();
+      }
+    },
+    skip: function (d) {
+      var a = this.$refs.a;
+      if (!a || !this.dur) return;
+      a.currentTime = Math.max(0, Math.min(this.dur, (a.currentTime || 0) + d));
+    },
+    seekBar: function (e) {
+      var a = this.$refs.a;
+      if (!a || !this.dur) return;
+      var r = e.currentTarget.getBoundingClientRect();
+      var p = r.width ? (e.clientX - r.left) / r.width : 0;
+      a.currentTime = Math.max(0, Math.min(1, p)) * this.dur;
+    },
+    onKey: function (e) {
+      var a = this.$refs.a;
+      if (!a) return;
+      if (e.key === 'ArrowRight') { this.skip(5); e.preventDefault(); }
+      else if (e.key === 'ArrowLeft') { this.skip(-5); e.preventDefault(); }
+      else if (e.key === 'Home') { a.currentTime = 0; e.preventDefault(); }
+      else if (e.key === 'End') { if (this.dur) a.currentTime = this.dur; e.preventDefault(); }
+      else if (e.key === ' ' || e.key === 'Enter') { this.toggle(); e.preventDefault(); }
+    },
+    setRate: function (v) { this.rate = v; },
+    onVolume: function (e) { this.volume = Number(e.target.value); },
+    /* Hosted tier failed (cold CDN / blocked network) → one-shot fallback to the
+       relative local asset; a second failure is terminal. */
+    onSourceError: function () {
+      if (!this.localFallback && this.hostedSrc !== this.localSrc) {
+        this.localFallback = true;
+        this.failed = false;
+        var self = this;
+        this.$nextTick(function () {
+          var a = self.$refs.a;
+          if (a) { try { a.load(); } catch (err) { /* detached */ } }
+        });
+      } else {
+        this.failed = true;
+        this.playing = false;
+      }
+    },
+    onMeta: function (e) { this.dur = e.target.duration || 0; },
+    onTime: function (e) { this.cur = e.target.currentTime || 0; },
+    onPlay: function () { this.playing = true; this.failed = false; },
+    onPause: function () { this.playing = false; },
+    onEnd: function () { this.playing = false; this.cur = 0; }
+  },
+  beforeUnmount: function () {
+    var a = this.$refs.a;
+    if (a) { try { a.pause(); } catch (err) { /* detached */ } }
+  },
+  template:
+    /* Same visual system as the Course 1 narrator: ac-card theme shell, sky badge,
+       amber-ring ac-play gradient transport, waveform seek bars, mono time row.
+       Narrative + takeaways live in the studio cards below — this is the deck only. */
+    '<div class="ac-card rounded-2xl border p-4 mb-5">' +
+      /* Header — compact deck label (hero above carries the full title) */
+      '<div class="flex items-center gap-3 mb-4">' +
+        '<span class="shrink-0 text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full bg-sky-100 text-sky-700">{{ epBadge }}</span>' +
+        '<span class="min-w-0 flex-1 text-[13px] font-bold uppercase tracking-wider text-slate-500 truncate">Executive Audio Deck</span>' +
+        '<span class="shrink-0 text-[11px] mono text-slate-400">{{ fmt(dur) }}</span>' +
+      '</div>' +
+      /* Transport row — identical geometry to the Course 1 player */
+      '<div class="flex items-center gap-3 sm:gap-4">' +
+        '<button type="button" @click="toggle" :disabled="failed" :aria-label="ariaLabel" ' +
+          'class="relative w-14 h-14 shrink-0 rounded-full grid place-items-center focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-indigo-600 disabled:opacity-40 cursor-pointer">' +
+          '<span aria-hidden="true" class="absolute inset-0 rounded-full border-2 border-amber-500"></span>' +
+          '<span class="ac-play w-11 h-11 rounded-full grid place-items-center text-white">' +
+            '<svg v-if="playing" class="ic w-5 h-5"><use href="#i-pause"></use></svg>' +
+            '<svg v-else class="ic w-5 h-5"><use href="#i-play"></use></svg>' +
+          '</span>' +
+        '</button>' +
+        '<button type="button" @click="skip(-10)" aria-label="Replay 10 seconds" ' +
+          'class="w-9 h-9 shrink-0 rounded-full border border-slate-300 bg-white text-slate-600 grid place-items-center hover:bg-slate-100 transition focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-600 cursor-pointer">' +
+          '<svg class="ic w-5 h-5"><use href="#i-back10"></use></svg>' +
+        '</button>' +
+        '<div class="flex-1 min-w-0 h-11 flex items-center gap-[3px] cursor-pointer select-none" ' +
+          'role="slider" tabindex="0" :aria-valuemin="0" :aria-valuemax="durMax" :aria-valuenow="curNow" ' +
+          'aria-label="Seek episode audio" @click="seekBar" @keydown="onKey">' +
+          '<span v-for="(h,i) in bars" :key="i" class="ac-bar flex-1 min-w-[2px] rounded-full" ' +
+            ':class="barClass(i)" :style="barStyle(i)"></span>' +
+        '</div>' +
+        '<button type="button" @click="skip(10)" aria-label="Forward 10 seconds" ' +
+          'class="w-9 h-9 shrink-0 rounded-full border border-slate-300 bg-white text-slate-600 grid place-items-center hover:bg-slate-100 transition focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-600 cursor-pointer">' +
+          '<svg class="ic w-5 h-5"><use href="#i-fwd10"></use></svg>' +
+        '</button>' +
+      '</div>' +
+      /* Elapsed / total — identical to Course 1 */
+      '<div class="flex items-center justify-between mt-2.5">' +
+        '<span class="mono text-[12px] font-semibold text-slate-700 tabular-nums">{{ fmt(cur) }}</span>' +
+        '<span class="mono text-[12px] text-slate-500 tabular-nums">{{ fmt(dur) }}</span>' +
+      '</div>' +
+      /* Speed + volume (Course 2 spec controls) — Course 1 palette */
+      '<div class="mt-3 pt-3 border-t border-slate-200/70 flex flex-wrap items-center justify-between gap-x-4 gap-y-3">' +
+        '<div class="flex items-center gap-2">' +
+          '<span class="lbl text-slate-500">Speed</span>' +
+          '<div class="flex bg-slate-100 rounded-lg p-0.5 gap-0.5" role="group" aria-label="Playback speed">' +
+            '<button v-for="s in [1,1.25,1.5]" :key="s" type="button" @click="setRate(s)" ' +
+              ':aria-pressed="rate===s" ' +
+              ':class="rate===s ? \'bg-white text-indigo-700 shadow-xs\' : \'text-slate-500 hover:text-slate-700\'" ' +
+              'class="min-w-[42px] h-7 px-1.5 rounded-md text-[11px] font-bold mono transition cursor-pointer">{{ s }}&times;</button>' +
+          '</div>' +
+        '</div>' +
+        '<div class="flex items-center gap-2 min-w-0">' +
+          '<svg class="ic w-4 h-4 text-slate-400 shrink-0"><use href="#i-volume"></use></svg>' +
+          '<input type="range" min="0" max="1" step="0.05" :value="volume" @input="onVolume" ' +
+            'aria-label="Volume" class="w-24 sm:w-28 h-1.5 accent-indigo-600 cursor-pointer"/>' +
+        '</div>' +
+      '</div>' +
+      /* Source tier note + failure state */
+      '<p v-if="failed" class="text-[12px] text-rose-700 mt-2">Episode unavailable — the audio file could not be loaded from any source tier.</p>' +
+      '<div class="mt-2 flex items-center gap-1.5" v-else-if="localFallback">' +
+        '<span class="w-1.5 h-1.5 rounded-full bg-emerald-500 shrink-0"></span>' +
+        '<p class="text-[11px] text-slate-400">{{ sourceNote }}</p>' +
+      '</div>' +
+      '<audio ref="a" preload="metadata" @loadedmetadata="onMeta" @timeupdate="onTime" ' +
+        '@play="onPlay" @pause="onPause" @ended="onEnd">' +
+        '<source :src="activeTrackUrl" type="audio/mp4" @error="onSourceError"/>' +
+      '</audio>' +
+    '</div>'
+};
+
 /* ------------------------------------------------------------------- bootstrap */
 var app = Vue.createApp(App);
 app.component('exam-check', ExamCheck);
 app.component('module-audio', ModuleAudio);
+app.component('course2-player', Course2Player);
 app.directive('click-outside', {
   mounted: function (el, binding) {
     el._coHandler = function (ev) {
