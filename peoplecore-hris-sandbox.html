@@ -236,6 +236,21 @@
     html:not(.dark) .bg-slate-900 .bg-white.text-slate-500,html:not(.dark) .bg-slate-900 .bg-slate-50.text-slate-500,
     html:not(.dark) .bg-slate-900 .bg-slate-100.text-slate-500{color:#5b687d}
   }
+  /* Academy slide-over drawer & sticky trigger bar */
+  .backdrop-blur-xs{backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px)}
+  html.dark .bg-indigo-50\/80{background-color:rgba(28,34,74,.8)}
+  html.dark .bg-slate-50\/60{background-color:rgba(33,43,70,.6)}
+  html.dark .bg-slate-50\/50{background-color:rgba(33,43,70,.5)}
+  html.dark .bg-slate-50\/80{background-color:rgba(33,43,70,.8)}
+  html.dark .border-slate-200\/80{border-color:rgba(59,74,112,.8)}
+  html.dark .border-slate-200\/70{border-color:rgba(59,74,112,.7)}
+  html.dark .border-slate-200\/50{border-color:rgba(59,74,112,.5)}
+  html.dark .border-indigo-200\/80{border-color:rgba(61,72,148,.8)}
+  html.dark .bg-indigo-900\/30{background-color:rgba(49,46,129,.3)}
+  html.dark .text-indigo-950{color:#e0e7ff}
+  html.dark .bg-indigo-200\/60{background-color:rgba(49,46,129,.6);color:#c7d2fe}
+  html.dark .bg-white\/95{background-color:rgba(38,49,79,.95)}
+
   /* Academy narration player — podcast-style card */
   .ac-card{background:#faf7f1;border-color:#e9e2d6}
   html.dark .ac-card{background:#1d2740;border-color:#36456e}
@@ -349,9 +364,9 @@
 <!-- ============================ APPLICATION ROOT ============================ -->
 <div id="app" v-cloak class="min-h-screen flex flex-col">
   <!-- ================= GLOBAL TOP BAR ================= -->
-  <header class="sticky top-0 z-40 no-print">
+  <header class="relative lg:sticky lg:top-0 z-40 no-print">
     <div class="bg-slate-900 border-b border-slate-800">
-      <div class="mx-auto max-w-[1800px] px-3 sm:px-5 min-h-[64px] py-2 flex flex-wrap items-center gap-2 sm:gap-3">
+      <div class="mx-auto max-w-[1800px] px-2 sm:px-5 min-h-[64px] py-2 flex flex-wrap items-center gap-1.5 sm:gap-3 overflow-hidden">
         <!-- Brand -->
         <a href="./index.html" class="flex items-center gap-2.5 shrink-0 hover:opacity-90 transition group" title="Return to PeopleCore Showcase &amp; Documentation">
           <div class="w-9 h-9 rounded-lg bg-indigo-600 grid place-items-center shadow-sm group-hover:bg-indigo-500 transition">
@@ -405,7 +420,7 @@
           </transition>
         </div>
         <!-- Header actions -->
-        <div class="flex flex-wrap items-center justify-end gap-1.5 sm:gap-2 ml-auto shrink-0">
+        <div class="flex flex-wrap items-center justify-end gap-1.5 sm:gap-2 ml-auto max-w-full">
           <!-- Notifications -->
           <div class="relative" v-click-outside="closeNotify">
             <button @click="notifyOpen=!notifyOpen" title="Notifications"
@@ -465,9 +480,9 @@
               </div>
             </transition>
           </div>
-          <!-- Data exchange hub -->
+          <!-- Data exchange hub (hidden on mobile to reduce header wrapping) -->
           <button @click="hubOpen=true" title="Data Exchange Hub (CSV / JSON)"
-            class="w-9 h-9 grid place-items-center rounded-lg bg-slate-800 border border-slate-700 text-slate-300 hover:text-white hover:border-slate-600 transition">
+            class="w-9 h-9 hidden sm:grid place-items-center rounded-lg bg-slate-800 border border-slate-700 text-slate-300 hover:text-white hover:border-slate-600 transition">
             <svg class="ic w-[18px] h-[18px]"><use href="#i-db"></use></svg>
           </button>
           <!-- Flight simulator missions launcher (spec §9) -->
@@ -487,17 +502,17 @@
         </div>
       </div>
     </div>
-    <!-- Context strip -->
-    <div class="bg-white border-b border-slate-200">
+    <!-- Context strip — hidden on mobile (< lg:) because the mobile sticky control bar already shows module name + worker count -->
+    <div class="bg-white border-b border-slate-200 hidden lg:block">
       <div class="mx-auto max-w-[1800px] px-3 sm:px-5 h-9 flex items-center gap-3 sm:gap-5 text-[11px] text-slate-500 overflow-x-auto scroll-slim whitespace-nowrap">
         <span class="flex items-center gap-1.5">
           <svg class="ic w-3.5 h-3.5" :class="db.mode==='sandbox' ? 'text-indigo-600' : 'text-violet-600'"><use :href="db.mode==='sandbox' ? '#i-grid' : '#i-book'"></use></svg>
           <span class="font-semibold text-slate-700">{{ contextLabel }}</span>
         </span>
-        <span class="hidden sm:inline">Perspective: <span class="font-semibold text-slate-700">{{ roleDefs[db.role].label }}</span></span>
-        <span class="hidden lg:inline">Jurisdiction: <span class="font-semibold text-slate-700">{{ regime.picker }}</span> <span class="hidden xl:inline text-slate-400">— {{ regime.statShort }}</span></span>
-        <span class="hidden md:inline mono">{{ db.employees.length }} worker records</span>
-        <span class="hidden md:inline mono">{{ db.audit.length }} audit events</span>
+        <span>Perspective: <span class="font-semibold text-slate-700">{{ roleDefs[db.role].label }}</span></span>
+        <span>Jurisdiction: <span class="font-semibold text-slate-700">{{ regime.picker }}</span> <span class="hidden xl:inline text-slate-400">— {{ regime.statShort }}</span></span>
+        <span class="mono">{{ db.employees.length }} worker records</span>
+        <span class="mono">{{ db.audit.length }} audit events</span>
         <span class="ml-auto flex items-center gap-1.5 text-emerald-700 font-medium">
           <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> localStorage persistence active
         </span>
@@ -507,6 +522,151 @@
 
   <!-- ================= BODY ================= -->
   <div class="flex-1 w-full mx-auto max-w-[1800px] flex">
+    <!-- ============ SANDBOX MOBILE SLIDE-OVER DRAWER ============ -->
+    <!-- Semi-transparent backdrop overlay -->
+    <div v-if="db.mode==='sandbox'" v-show="isSandboxDrawerOpen"
+      @click="closeSandboxDrawer"
+      class="fixed inset-0 bg-black/50 backdrop-blur-xs z-40 lg:hidden transition-opacity duration-300 no-print"
+      aria-hidden="true"></div>
+
+    <!-- Slide-over drawer container -->
+    <aside v-if="db.mode==='sandbox'"
+      class="fixed inset-y-0 left-0 z-50 w-full sm:w-[380px] max-w-[85vw] bg-white flex flex-col shadow-2xl transition-transform duration-300 ease-in-out lg:hidden no-print"
+      :class="isSandboxDrawerOpen ? 'translate-x-0' : '-translate-x-full'"
+      role="dialog" aria-modal="true" aria-label="PeopleCore Sandbox Navigation">
+      <!-- Drawer Header -->
+      <div class="p-4 sm:p-5 border-b border-slate-200 bg-slate-50/60 flex items-start justify-between gap-3 shrink-0">
+        <div class="min-w-0">
+          <div class="flex items-center gap-2 mb-1">
+            <div class="w-6 h-6 rounded-md bg-indigo-600 text-white grid place-items-center shadow-xs shrink-0">
+              <svg class="ic w-3.5 h-3.5 text-white"><use href="#i-grid"></use></svg>
+            </div>
+            <h2 class="text-xs sm:text-sm font-bold tracking-[0.08em] text-slate-900 uppercase">SANDBOX MODULES</h2>
+          </div>
+          <p class="text-[11px] sm:text-xs text-slate-500 font-medium">10 Operational Engines &bull; Interactive Simulator</p>
+        </div>
+        <button type="button" @click="closeSandboxDrawer" aria-label="Close sandbox drawer" title="Close drawer (Esc)"
+          class="w-9 h-9 rounded-lg border border-slate-200 bg-white hover:bg-slate-100 text-slate-500 hover:text-slate-900 grid place-items-center shadow-xs transition focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-600 shrink-0 cursor-pointer">
+          <svg class="ic w-4 h-4"><use href="#i-x"></use></svg>
+        </button>
+      </div>
+
+      <!-- Drawer Content: Quick status + Scrollable Module List -->
+      <div class="flex-1 overflow-y-auto scroll-slim p-3 sm:p-4 space-y-4">
+        <!-- Perspective & Jurisdiction Quick Card -->
+        <div class="p-3.5 rounded-xl border border-slate-200/80 bg-slate-50/50">
+          <div class="flex items-center justify-between text-xs mb-2">
+            <span class="font-medium text-slate-600">Active Perspective</span>
+            <span class="font-bold text-slate-800">{{ roleDefs[db.role].label }}</span>
+          </div>
+          <div class="grid grid-cols-2 gap-2 text-[11px]">
+            <div class="p-2 rounded-lg bg-white border border-slate-200/70">
+              <span class="text-slate-400 block text-[10px] uppercase font-semibold">Jurisdiction</span>
+              <span class="font-bold text-slate-800 truncate block">{{ regime.picker }}</span>
+            </div>
+            <div class="p-2 rounded-lg bg-white border border-slate-200/70">
+              <span class="text-slate-400 block text-[10px] uppercase font-semibold">Workers</span>
+              <span class="font-bold text-slate-800 mono">{{ db.employees.length }}</span>
+            </div>
+          </div>
+          <div class="flex items-center justify-between text-[11px] text-slate-500 mt-2.5 pt-2 border-t border-slate-200/60">
+            <span>Audit Events Logged</span>
+            <span class="mono font-semibold text-slate-700">{{ db.audit.length }}</span>
+          </div>
+        </div>
+
+        <!-- Navigation list of all 10 modules -->
+        <nav class="space-y-1.5" aria-label="Sandbox Modules (Mobile Drawer)">
+          <button v-for="m in modules" :key="m.id" @click="setTab(m.id)"
+            :class="[
+              'w-full flex items-center gap-3 p-3 rounded-xl border text-left transition-all group min-h-[50px] cursor-pointer',
+              db.tab === m.id
+                ? 'bg-indigo-50/80 text-indigo-700 font-semibold border-l-4 border-indigo-600 border-indigo-200/80 shadow-xs'
+                : (roleCan(m)
+                  ? 'bg-white hover:bg-slate-50 text-slate-700 border-slate-200/70 hover:border-slate-300'
+                  : 'bg-slate-50/80 text-slate-400 border-slate-200/50')
+            ]">
+            <!-- Icon on left -->
+            <span class="w-8 h-8 rounded-lg grid place-items-center text-xs font-bold shrink-0 transition"
+              :class="[
+                db.tab === m.id
+                  ? 'bg-indigo-600 text-white shadow-xs'
+                  : (roleCan(m)
+                    ? 'bg-slate-100 text-slate-600 group-hover:bg-indigo-100 group-hover:text-indigo-600'
+                    : 'bg-slate-200 text-slate-400')
+              ]">
+              <svg class="ic w-4 h-4"><use :href="'#i-'+m.icon"></use></svg>
+            </span>
+
+            <!-- Label and module number -->
+            <span class="min-w-0 flex-1">
+              <span class="flex items-center gap-1.5">
+                <span class="text-[10px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded mono"
+                  :class="db.tab === m.id ? 'bg-indigo-200/60 text-indigo-800' : 'bg-slate-100 text-slate-500'">
+                  0{{ m.n }}
+                </span>
+                <span v-if="!roleCan(m)" class="text-[10px] uppercase font-semibold text-rose-600 bg-rose-50 border border-rose-200 px-1 rounded flex items-center gap-0.5">
+                  <svg class="ic w-2.5 h-2.5"><use href="#i-lock"></use></svg> Locked
+                </span>
+              </span>
+              <span class="block text-[13px] mt-0.5 leading-snug truncate"
+                :class="db.tab === m.id ? 'text-indigo-950 font-bold' : 'text-slate-800 font-semibold group-hover:text-indigo-600'">
+                {{ m.label }}
+              </span>
+            </span>
+
+            <!-- Active indicator chevron -->
+            <svg v-if="db.tab === m.id" class="ic w-4 h-4 text-indigo-600 shrink-0 self-center"><use href="#i-chev-r"></use></svg>
+          </button>
+
+          <!-- Settings entry -->
+          <button type="button" @click="setTab('settings')"
+            :class="[
+              'w-full flex items-center gap-3 p-3 rounded-xl border text-left transition-all group min-h-[50px] cursor-pointer mt-2',
+              db.tab === 'settings'
+                ? 'bg-slate-900 text-white font-semibold border-l-4 border-indigo-400 border-slate-900 shadow-xs'
+                : 'bg-white hover:bg-slate-50 text-slate-700 border-slate-200/70 hover:border-slate-300'
+            ]">
+            <span class="w-8 h-8 rounded-lg grid place-items-center text-xs font-bold shrink-0 transition"
+              :class="db.tab === 'settings' ? 'bg-indigo-500 text-white' : 'bg-slate-100 text-slate-600 group-hover:bg-slate-200'">
+              <svg class="ic w-4 h-4"><use href="#i-gear"></use></svg>
+            </span>
+            <span class="min-w-0 flex-1">
+              <span class="block text-[13px] font-semibold leading-snug"
+                :class="db.tab === 'settings' ? 'text-white' : 'text-slate-800 group-hover:text-indigo-600'">
+                Settings
+              </span>
+              <span class="block text-[10px] mt-0.5"
+                :class="db.tab === 'settings' ? 'text-slate-300' : 'text-slate-400'">
+                Preferences, offline audit &amp; storage
+              </span>
+            </span>
+            <svg v-if="db.tab === 'settings'" class="ic w-4 h-4 text-indigo-300 shrink-0 self-center"><use href="#i-chev-r"></use></svg>
+          </button>
+        </nav>
+      </div>
+
+      <!-- Drawer Footer: Quick Academy Courseware Card -->
+      <div class="p-3 sm:p-4 border-t border-slate-200 bg-slate-50/80 shrink-0">
+        <div class="rounded-xl border border-slate-200 bg-white p-3.5 shadow-xs">
+          <div class="flex items-center justify-between text-xs mb-1.5">
+            <div class="flex items-center gap-1.5">
+              <svg class="ic w-3.5 h-3.5 text-violet-600"><use href="#i-book"></use></svg>
+              <span class="font-bold text-slate-800">HR Academy Courseware</span>
+            </div>
+            <span class="mono text-[11px] font-semibold text-slate-600">{{ academyDoneCount }}/10</span>
+          </div>
+          <div class="h-1.5 bg-slate-200 rounded-full overflow-hidden mb-2.5">
+            <div class="h-full bg-violet-600 rounded-full transition-all duration-500" :style="{width:(academyDoneCount*10)+'%'}"></div>
+          </div>
+          <button type="button" @click="setMode('academy'); closeSandboxDrawer()"
+            class="w-full h-8 rounded-lg bg-violet-600 hover:bg-violet-700 text-white text-xs font-semibold flex items-center justify-center gap-1.5 shadow-xs transition cursor-pointer">
+            <svg class="ic w-3.5 h-3.5"><use href="#i-book"></use></svg> Open Courseware Curriculum
+          </button>
+        </div>
+      </div>
+    </aside>
+
     <!-- Sandbox module rail -->
     <aside v-show="db.mode==='sandbox'" class="hidden lg:block w-[248px] shrink-0 border-r border-slate-200 bg-white sticky top-[100px] self-start max-h-[calc(100vh-100px)] overflow-y-auto scroll-slim no-print">
       <nav class="p-3.5 space-y-0.5">
@@ -550,21 +710,47 @@
     </aside>
 
     <main class="flex-1 min-w-0">
-      <!-- Mobile module strip -->
-      <div v-if="db.mode==='sandbox'" class="lg:hidden border-b border-slate-200 bg-white px-3 py-2 overflow-x-auto scroll-slim no-print">
-        <div class="flex gap-1.5 min-w-max">
-          <button v-for="m in modules" :key="m.id" @click="setTab(m.id)"
-            :class="db.tab===m.id ? 'bg-indigo-600 text-white border-indigo-600' : 'bg-white text-slate-600 border-slate-200'"
-            class="flex items-center gap-1.5 px-2.5 h-8 rounded-lg border text-xs font-medium whitespace-nowrap">
-            <svg class="ic w-3.5 h-3.5"><use :href="'#i-'+m.icon"></use></svg>{{ m.label }}
-            <svg v-if="!roleCan(m)" class="ic w-3 h-3"><use href="#i-lock"></use></svg>
+      <!-- ============ STICKY SANDBOX BREADCRUMB & CONTROL BAR (MOBILE) ============ -->
+      <div v-if="db.mode==='sandbox'" class="sticky top-0 z-30 w-full max-w-full bg-white/95 backdrop-blur-md border-b border-slate-200/80 px-2.5 sm:px-6 py-2 flex items-center justify-between gap-1.5 sm:gap-3 shadow-xs no-print lg:hidden">
+        <!-- Left: Hamburger button + Module title indicator -->
+        <div class="flex items-center gap-1.5 sm:gap-2.5 min-w-0 flex-1 overflow-hidden">
+          <button type="button" @click="toggleSandboxDrawer" aria-label="Toggle sandbox navigation menu" :aria-expanded="isSandboxDrawerOpen"
+            class="w-8 h-8 sm:w-9 sm:h-9 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 hover:text-indigo-600 flex items-center justify-center shrink-0 shadow-xs transition focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-600 cursor-pointer">
+            <svg class="ic w-4 h-4"><use href="#i-menu"></use></svg>
           </button>
-          <!-- Settings entry for the mobile view strip (spec §10) -->
-          <button @click="setTab('settings')"
-            :class="db.tab==='settings' ? 'bg-slate-900 text-white border-slate-900' : 'bg-white text-slate-600 border-slate-200'"
-            class="flex items-center gap-1.5 px-2.5 h-8 rounded-lg border text-xs font-medium whitespace-nowrap">
-            <svg class="ic w-3.5 h-3.5"><use href="#i-gear"></use></svg>Settings
+          <button type="button" @click="openSandboxDrawer"
+            class="flex items-center gap-1 sm:gap-2 text-left min-w-0 flex-1 overflow-hidden text-slate-700 hover:text-indigo-600 transition group cursor-pointer focus:outline-none">
+            <span v-if="db.tab==='settings'" class="flex items-center gap-1.5 min-w-0 truncate">
+              <svg class="ic w-4 h-4 text-slate-700 shrink-0"><use href="#i-gear"></use></svg>
+              <span class="text-xs sm:text-sm font-bold text-slate-900 group-hover:text-indigo-600 truncate">Settings</span>
+            </span>
+            <span v-else-if="currentModule" class="flex items-center gap-1.5 min-w-0 truncate">
+              <svg class="ic w-4 h-4 text-indigo-600 shrink-0"><use :href="'#i-'+currentModule.icon"></use></svg>
+              <span class="text-xs sm:text-sm font-bold text-slate-900 group-hover:text-indigo-600 shrink-0">0{{ currentModule.n }}:</span>
+              <span class="text-xs sm:text-sm font-medium text-slate-600 group-hover:text-indigo-600 truncate block min-w-0">{{ currentModule.label }}</span>
+              <svg class="ic w-3.5 h-3.5 text-slate-400 group-hover:text-indigo-500 shrink-0 hidden sm:inline"><use href="#i-chev-d"></use></svg>
+            </span>
+            <span v-else class="text-xs sm:text-sm font-medium text-slate-600 truncate">{{ db.tab }}</span>
           </button>
+        </div>
+
+        <!-- Right: Perspective/Worker badge + Prev/Next chevron navigation buttons -->
+        <div class="flex items-center gap-1 sm:gap-2 shrink-0">
+          <div class="flex items-center gap-1 sm:gap-1.5 px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-full bg-slate-100 border border-slate-200/70 text-[10px] sm:text-[11px] font-semibold text-slate-700 shrink-0">
+            <svg class="ic w-3 h-3 text-indigo-600 shrink-0"><use href="#i-users"></use></svg>
+            <span class="mono">{{ db.employees.length }}</span>
+            <span class="hidden sm:inline text-slate-500 font-normal">workers</span>
+          </div>
+          <div class="flex items-center gap-1 shrink-0">
+            <button type="button" @click="prevSandboxTab" :disabled="currentModule && currentModule.n === 0" aria-label="Previous module" title="Previous module"
+              class="w-7 h-7 sm:w-8 sm:h-8 rounded-lg border border-slate-200 bg-white text-slate-600 hover:bg-slate-50 hover:text-slate-900 disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center shadow-xs transition cursor-pointer">
+              <svg class="ic w-3.5 h-3.5 sm:w-4 sm:h-4"><use href="#i-chev-l"></use></svg>
+            </button>
+            <button type="button" @click="nextSandboxTab" :disabled="db.tab === 'settings'" aria-label="Next module" title="Next module"
+              class="w-7 h-7 sm:w-8 sm:h-8 rounded-lg border border-slate-200 bg-white text-slate-600 hover:bg-slate-50 hover:text-slate-900 disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center shadow-xs transition cursor-pointer">
+              <svg class="ic w-3.5 h-3.5 sm:w-4 sm:h-4"><use href="#i-chev-r"></use></svg>
+            </button>
+          </div>
         </div>
       </div>
 
@@ -1907,9 +2093,9 @@
             </div>
           </div>
 
-          <div class="grid xl:grid-cols-[minmax(0,420px)_minmax(0,1fr)] gap-4 mb-4">
+          <div class="grid xl:grid-cols-[minmax(0,420px)_minmax(0,1fr)] gap-4 mb-4 min-w-0">
             <!-- 9-box -->
-            <div class="bg-white border border-slate-200 rounded-xl">
+            <div class="bg-white border border-slate-200 rounded-xl min-w-0">
               <div class="px-4 py-3 border-b border-slate-200 flex items-center justify-between">
                 <div>
                   <h3 class="text-sm font-semibold text-slate-800">9-Box succession matrix</h3>
@@ -1946,7 +2132,7 @@
             </div>
 
             <!-- Filtered talent list -->
-            <div class="bg-white border border-slate-200 rounded-xl">
+            <div class="bg-white border border-slate-200 rounded-xl min-w-0">
               <div class="px-4 py-3 border-b border-slate-200 flex items-center justify-between">
                 <div>
                   <h3 class="text-sm font-semibold text-slate-800">Personnel in view</h3>
@@ -2313,59 +2499,261 @@
         </template>
       </template>
       <template v-else>
-        <div class="mx-auto w-full max-w-[1800px] grid lg:grid-cols-[268px_minmax(0,1fr)]">
-          <!-- ============ ACADEMY TABLE OF CONTENTS ============ -->
-          <aside class="border-b lg:border-b-0 lg:border-r border-slate-200 bg-white lg:sticky lg:top-[100px] lg:self-start lg:h-[calc(100vh-100px)] overflow-y-auto scroll-slim no-print">
-            <div class="p-4 border-b border-slate-200">
+        <!-- ============ COURSERA-STYLE MOBILE SLIDE-OVER DRAWER ============ -->
+        <!-- Semi-transparent backdrop overlay -->
+        <div v-show="isAcademyDrawerOpen"
+          @click="closeAcademyDrawer"
+          class="fixed inset-0 bg-black/50 backdrop-blur-xs z-40 lg:hidden transition-opacity duration-300 no-print"
+          aria-hidden="true"></div>
+
+        <!-- Slide-over drawer container -->
+        <aside
+          class="fixed inset-y-0 left-0 z-50 w-full sm:w-[380px] max-w-[85vw] bg-white flex flex-col shadow-2xl transition-transform duration-300 ease-in-out lg:hidden no-print"
+          :class="isAcademyDrawerOpen ? 'translate-x-0' : '-translate-x-full'"
+          role="dialog" aria-modal="true" aria-label="HR Academy Curriculum Navigation">
+          <!-- Drawer Header -->
+          <div class="p-4 sm:p-5 border-b border-slate-200 bg-slate-50/60 flex items-start justify-between gap-3 shrink-0">
+            <div class="min-w-0">
               <div class="flex items-center gap-2 mb-1">
-                <svg class="ic w-4 h-4 text-violet-600"><use href="#i-book"></use></svg>
-                <span class="text-xs font-bold tracking-[0.12em] text-slate-800">HR ACADEMY</span>
+                <div class="w-6 h-6 rounded-md bg-indigo-600 text-white grid place-items-center shadow-xs shrink-0">
+                  <svg class="ic w-3.5 h-3.5 text-white"><use href="#i-book"></use></svg>
+                </div>
+                <h2 class="text-xs sm:text-sm font-bold tracking-[0.08em] text-slate-900 uppercase">HR Academy Curriculum</h2>
               </div>
-              <p class="text-[11px] text-slate-500 leading-relaxed">Interactive courseware · 10 curriculum modules · embedded knowledge checks</p>
-              <div class="mt-3">
-                <div class="flex items-center justify-between text-[11px] mb-1">
-                  <span class="text-slate-500">Certification progress</span>
-                  <span class="mono font-semibold text-slate-700">{{ academyDoneCount }}/10</span>
-                </div>
-                <div class="h-1.5 bg-slate-200 rounded-full overflow-hidden">
-                  <div class="h-full bg-violet-600 transition-all duration-500" :style="{width:(academyDoneCount*10)+'%'}"></div>
-                </div>
+              <p class="text-[11px] sm:text-xs text-slate-500 font-medium">10 Interactive Modules &bull; Enterprise Operations</p>
+            </div>
+            <button type="button" @click="closeAcademyDrawer" aria-label="Close curriculum drawer" title="Close drawer (Esc)"
+              class="w-9 h-9 rounded-lg border border-slate-200 bg-white hover:bg-slate-100 text-slate-500 hover:text-slate-900 grid place-items-center shadow-xs transition focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-600 shrink-0 cursor-pointer">
+              <svg class="ic w-4 h-4"><use href="#i-x"></use></svg>
+            </button>
+          </div>
+
+          <!-- Drawer Content: Scrollable Curriculum Tree -->
+          <div class="flex-1 overflow-y-auto scroll-slim p-3 sm:p-4 space-y-4">
+            <!-- Overall progress bar and percentage at the top -->
+            <div class="p-3.5 rounded-xl border border-slate-200/80 bg-slate-50/50">
+              <div class="flex items-center justify-between text-xs mb-1.5">
+                <span class="font-medium text-slate-600">Curriculum Progress</span>
+                <span class="mono font-bold text-slate-800">{{ academyDoneCount }}/10 ({{ academyDoneCount * 10 }}%)</span>
+              </div>
+              <div class="h-2 bg-slate-200 rounded-full overflow-hidden">
+                <div class="h-full bg-gradient-to-r from-indigo-600 to-violet-600 rounded-full transition-all duration-500" :style="{width:(academyDoneCount*10)+'%'}"></div>
+              </div>
+              <div class="flex items-center justify-between text-[11px] text-slate-400 mt-2">
+                <span>10 Flight-Checks Required</span>
+                <span v-if="academyDoneCount === 10" class="text-emerald-700 font-semibold flex items-center gap-1">
+                  <svg class="ic w-3 h-3"><use href="#i-check"></use></svg> Certified
+                </span>
+                <span v-else>{{ 10 - academyDoneCount }} outstanding</span>
               </div>
             </div>
-            <nav class="p-2.5 space-y-1">
+
+            <!-- List of all 10 modules -->
+            <nav class="space-y-1.5" aria-label="Academy Modules (Mobile Drawer)">
               <button v-for="m in academy" :key="m.n" @click="gotoModule(m.n)"
-                :class="db.am===m.n ? 'bg-violet-600 text-white border-violet-600' : (moduleUnlocked(m.n) ? 'bg-white text-slate-600 border-transparent hover:bg-slate-50' : 'bg-slate-50 text-slate-400 border-transparent hover:bg-slate-100')"
-                class="w-full flex items-start gap-2.5 px-2.5 py-2 rounded-lg border text-left transition">
+                :class="[
+                  'w-full flex items-start gap-3 p-3 rounded-xl border text-left transition-all group min-h-[52px] cursor-pointer',
+                  db.am === m.n
+                    ? 'bg-indigo-50/80 text-indigo-700 font-semibold border-l-4 border-indigo-600 border-indigo-200/80 shadow-xs'
+                    : (db.academyDone[m.n]
+                      ? 'bg-white hover:bg-slate-50 text-slate-700 border-slate-200/70 hover:border-slate-300'
+                      : (moduleUnlocked(m.n)
+                        ? 'bg-white hover:bg-slate-50 text-slate-600 border-slate-200/70 hover:border-slate-300'
+                        : 'bg-slate-50/80 text-slate-400 border-slate-200/50 cursor-not-allowed opacity-75'))
+                ]">
+                <!-- Status icon on the left -->
+                <span class="w-7 h-7 rounded-lg grid place-items-center text-xs font-bold shrink-0 mt-0.5 transition"
+                  :class="[
+                    db.am === m.n
+                      ? 'bg-indigo-600 text-white shadow-xs'
+                      : (db.academyDone[m.n]
+                        ? 'bg-emerald-100 text-emerald-700'
+                        : (moduleUnlocked(m.n)
+                          ? 'bg-slate-100 text-slate-600 group-hover:bg-indigo-100 group-hover:text-indigo-600'
+                          : 'bg-slate-200 text-slate-400'))
+                  ]">
+                  <svg v-if="db.academyDone[m.n] && db.am !== m.n" class="ic w-4 h-4"><use href="#i-check"></use></svg>
+                  <svg v-else-if="!moduleUnlocked(m.n)" class="ic w-3.5 h-3.5"><use href="#i-lock"></use></svg>
+                  <span v-else>{{ m.n }}</span>
+                </span>
+
+                <!-- Module number + bold title + duration/lab badge -->
+                <span class="min-w-0 flex-1">
+                  <span class="flex items-center gap-1.5 flex-wrap">
+                    <span class="text-[10px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded mono"
+                      :class="db.am === m.n ? 'bg-indigo-200/60 text-indigo-800' : 'bg-slate-100 text-slate-500'">
+                      MOD {{ m.n }}
+                    </span>
+                    <span class="text-[10px] mono text-slate-400">{{ m.time }} min</span>
+                    <span v-if="m.tag" class="text-[10px] uppercase font-semibold text-slate-400">&bull; {{ m.tag }}</span>
+                  </span>
+                  <span class="block text-[13px] mt-1 leading-snug"
+                    :class="db.am === m.n ? 'text-indigo-950 font-bold' : 'text-slate-800 font-semibold group-hover:text-indigo-600'">
+                    {{ m.title }}
+                  </span>
+                  <span v-if="db.academyExam[m.n] && db.academyExam[m.n].submitted && !db.academyExam[m.n].passed"
+                    class="inline-block mt-1 text-[10px] font-bold text-amber-700 bg-amber-50 border border-amber-200 px-1.5 py-0.5 rounded">
+                    Flight Check: {{ db.academyExam[m.n].score }}/10 (Retake required)
+                  </span>
+                  <span v-else-if="db.academyDone[m.n]"
+                    class="inline-block mt-1 text-[10px] font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 px-1.5 py-0.5 rounded">
+                    Cleared 10/10 Flight-Check
+                  </span>
+                </span>
+
+                <!-- Active indicator chevron -->
+                <svg v-if="db.am === m.n" class="ic w-4 h-4 text-indigo-600 shrink-0 self-center"><use href="#i-chev-r"></use></svg>
+              </button>
+            </nav>
+          </div>
+
+          <!-- Drawer Footer: Claim Certificate action card -->
+          <div class="p-3 sm:p-4 border-t border-slate-200 bg-slate-50/80 shrink-0">
+            <div class="rounded-xl border p-3.5 text-center shadow-xs"
+              :class="db.certifiedAt ? 'border-emerald-300 bg-emerald-50/70' : 'border-slate-200 bg-white'">
+              <svg class="ic w-6 h-6 mx-auto mb-1.5" :class="db.certifiedAt ? 'text-emerald-600' : 'text-indigo-600'"><use href="#i-award"></use></svg>
+              <div class="text-xs font-bold text-slate-900">Executive Credential</div>
+              <div class="text-[11px] text-slate-500 mt-0.5 leading-snug">
+                <template v-if="db.certifiedAt">Awarded {{ db.certifiedAt }} &bull; All 10 modules cleared.</template>
+                <template v-else>Clear all 10 module flight-checks to earn certification.</template>
+              </div>
+              <button type="button" @click="openCertificate(); closeAcademyDrawer()"
+                class="mt-2.5 w-full h-9 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold flex items-center justify-center gap-1.5 shadow-xs transition cursor-pointer">
+                <svg class="ic w-3.5 h-3.5"><use href="#i-award"></use></svg>{{ db.certifiedAt ? 'View Official Certificate' : 'Claim / Verify Status' }}
+              </button>
+            </div>
+          </div>
+        </aside>
+
+        <!-- ============ RESPONSIVE ACADEMY APP SHELL ============ -->
+        <div class="mx-auto w-full max-w-[1800px] flex flex-col lg:flex-row items-start min-h-[calc(100vh-100px)] w-full max-w-full">
+
+          <!-- Desktop Collapsible Sidebar (Coursera-style curriculum pane) -->
+          <aside v-show="!isAcademySidebarCollapsed"
+            class="hidden lg:flex flex-col w-[300px] shrink-0 border-r border-slate-200 bg-white sticky top-[100px] self-start h-[calc(100vh-100px)] overflow-y-auto scroll-slim no-print transition-all duration-300">
+            <!-- Sidebar Header with Collapse button -->
+            <div class="p-4 border-b border-slate-200 bg-slate-50/60 flex items-start justify-between gap-2 shrink-0">
+              <div class="min-w-0">
+                <div class="flex items-center gap-2 mb-1">
+                  <svg class="ic w-4 h-4 text-violet-600 shrink-0"><use href="#i-book"></use></svg>
+                  <span class="text-xs font-bold tracking-[0.12em] text-slate-800 uppercase">HR ACADEMY</span>
+                </div>
+                <p class="text-[11px] text-slate-500 leading-relaxed truncate">10 curriculum modules &bull; flight-checks</p>
+              </div>
+              <button type="button" @click="toggleAcademyDrawer" title="Collapse sidebar to expand reading area"
+                class="w-7 h-7 rounded-md border border-slate-200 bg-white hover:bg-slate-100 text-slate-400 hover:text-slate-700 grid place-items-center transition cursor-pointer shrink-0">
+                <svg class="ic w-3.5 h-3.5"><use href="#i-arrow-l"></use></svg>
+              </button>
+            </div>
+
+            <!-- Progress bar -->
+            <div class="p-3 border-b border-slate-200 bg-white shrink-0">
+              <div class="flex items-center justify-between text-[11px] mb-1">
+                <span class="text-slate-500 font-medium">Certification progress</span>
+                <span class="mono font-semibold text-slate-700">{{ academyDoneCount }}/10</span>
+              </div>
+              <div class="h-1.5 bg-slate-200 rounded-full overflow-hidden">
+                <div class="h-full bg-violet-600 transition-all duration-500" :style="{width:(academyDoneCount*10)+'%'}"></div>
+              </div>
+            </div>
+
+            <!-- Curriculum Module List -->
+            <nav class="p-2.5 space-y-1 flex-1 overflow-y-auto scroll-slim" aria-label="Desktop Academy Modules">
+              <button v-for="m in academy" :key="m.n" @click="gotoModule(m.n)"
+                :class="[
+                  'w-full flex items-start gap-2.5 px-2.5 py-2 rounded-lg border text-left transition min-h-[44px] cursor-pointer',
+                  db.am === m.n
+                    ? 'bg-violet-600 text-white border-violet-600 shadow-xs'
+                    : (moduleUnlocked(m.n)
+                      ? 'bg-white text-slate-600 border-transparent hover:bg-slate-50 hover:border-slate-200'
+                      : 'bg-slate-50 text-slate-400 border-transparent hover:bg-slate-100')
+                ]">
                 <span class="w-6 h-6 rounded-md grid place-items-center text-[11px] font-bold shrink-0 mt-0.5"
-                  :class="db.am===m.n ? 'bg-violet-500 text-white' : (db.academyDone[m.n] ? 'bg-emerald-100 text-emerald-700' : (moduleUnlocked(m.n) ? 'bg-slate-100 text-slate-500' : 'bg-slate-200 text-slate-400'))">
-                  <svg v-if="db.academyDone[m.n] && db.am!==m.n" class="ic w-3.5 h-3.5"><use href="#i-check"></use></svg>
+                  :class="[
+                    db.am === m.n
+                      ? 'bg-violet-500 text-white'
+                      : (db.academyDone[m.n]
+                        ? 'bg-emerald-100 text-emerald-700'
+                        : (moduleUnlocked(m.n)
+                          ? 'bg-slate-100 text-slate-500'
+                          : 'bg-slate-200 text-slate-400'))
+                  ]">
+                  <svg v-if="db.academyDone[m.n] && db.am !== m.n" class="ic w-3.5 h-3.5"><use href="#i-check"></use></svg>
                   <svg v-else-if="!moduleUnlocked(m.n)" class="ic w-3 h-3"><use href="#i-lock"></use></svg>
                   <span v-else>{{ m.n }}</span>
                 </span>
                 <span class="min-w-0 flex-1">
-                  <span class="block text-[13px] font-medium leading-snug" :class="db.am===m.n ? 'text-white' : (moduleUnlocked(m.n) ? 'text-slate-700' : 'text-slate-400')">{{ m.title }}</span>
-                  <span class="block text-[10px] mt-0.5 mono" :class="db.am===m.n ? 'text-violet-100' : 'text-slate-400'">{{ m.time }} min · {{ m.tag }}<span v-if="!moduleUnlocked(m.n) && !db.academyDone[m.n]"> · LOCKED</span><span v-else-if="db.academyExam[m.n] && db.academyExam[m.n].submitted && !db.academyExam[m.n].passed"> · {{ db.academyExam[m.n].score }}/10</span></span>
+                  <span class="block text-[13px] font-medium leading-snug"
+                    :class="db.am === m.n ? 'text-white font-semibold' : (moduleUnlocked(m.n) ? 'text-slate-700' : 'text-slate-400')">
+                    {{ m.title }}
+                  </span>
+                  <span class="block text-[10px] mt-0.5 mono" :class="db.am === m.n ? 'text-violet-100' : 'text-slate-400'">
+                    {{ m.time }} min &bull; {{ m.tag }}
+                    <span v-if="!moduleUnlocked(m.n) && !db.academyDone[m.n]"> &bull; LOCKED</span>
+                    <span v-else-if="db.academyExam[m.n] && db.academyExam[m.n].submitted && !db.academyExam[m.n].passed"> &bull; {{ db.academyExam[m.n].score }}/10</span>
+                  </span>
                 </span>
               </button>
             </nav>
-            <div class="p-3 mt-1 border-t border-slate-200">
-              <div class="rounded-xl border p-3.5 text-center" :class="db.certifiedAt ? 'border-emerald-300 bg-emerald-50' : 'border-slate-200 bg-slate-50'">
-                <svg class="ic w-6 h-6 mx-auto mb-1.5" :class="db.certifiedAt ? 'text-emerald-600' : 'text-slate-400'"><use href="#i-award"></use></svg>
+
+            <!-- Sidebar Footer -->
+            <div class="p-3 border-t border-slate-200 bg-white shrink-0">
+              <div class="rounded-xl border p-3 text-center" :class="db.certifiedAt ? 'border-emerald-300 bg-emerald-50' : 'border-slate-200 bg-slate-50'">
+                <svg class="ic w-5 h-5 mx-auto mb-1" :class="db.certifiedAt ? 'text-emerald-600' : 'text-slate-400'"><use href="#i-award"></use></svg>
                 <div class="text-xs font-bold text-slate-800">Core Certification</div>
-                <div class="text-[11px] text-slate-500 mt-0.5 leading-snug">
-                  <template v-if="db.certifiedAt">Awarded {{ db.certifiedAt }} — all 10 flight-checks cleared.</template>
+                <div class="text-[10px] text-slate-500 mt-0.5 leading-snug">
+                  <template v-if="db.certifiedAt">Awarded {{ db.certifiedAt }} &bull; 10/10 cleared.</template>
                   <template v-else>Pass all 10 flight-checks to unlock.</template>
                 </div>
-                <button @click="openCertificate"
-                  class="mt-2.5 w-full h-8 rounded-lg bg-slate-900 hover:bg-slate-800 text-white text-[11px] font-semibold flex items-center justify-center gap-1.5 transition">
-                  <svg class="ic w-3.5 h-3.5"><use href="#i-award"></use></svg>{{ db.certLocked ? 'View Certificate' : 'Claim / Edit Certificate' }}
+                <button type="button" @click="openCertificate"
+                  class="mt-2 w-full h-8 rounded-lg bg-slate-900 hover:bg-slate-800 text-white text-[11px] font-semibold flex items-center justify-center gap-1.5 transition cursor-pointer">
+                  <svg class="ic w-3 h-3"><use href="#i-award"></use></svg>{{ db.certifiedAt ? 'View Certificate' : 'Claim / Verify' }}
                 </button>
               </div>
             </div>
           </aside>
 
-          <!-- ============ ACADEMY CONTENT + UTILITY WORKBENCH (dual pane) ============ -->
-          <div class="min-w-0 p-4 sm:p-6 lg:p-8 grid xl:grid-cols-[minmax(0,68fr)_minmax(0,32fr)] gap-6 xl:gap-7 items-start">
+          <!-- Lesson Content Container (Flex-1) -->
+          <div class="flex-1 min-w-0 w-full max-w-full flex flex-col">
+
+            <!-- ============ STICKY BREADCRUMB & CONTROL BAR ============ -->
+            <div class="sticky top-0 lg:top-[100px] z-30 w-full max-w-full bg-white/95 backdrop-blur-md border-b border-slate-200/80 px-2.5 sm:px-6 py-2 flex items-center justify-between gap-1.5 sm:gap-3 shadow-xs no-print">
+              <!-- Left: Hamburger button + Module title indicator -->
+              <div class="flex items-center gap-1.5 sm:gap-2.5 min-w-0 flex-1 overflow-hidden">
+                <button type="button" @click="toggleAcademyDrawer" aria-label="Toggle curriculum navigation menu" :aria-expanded="isAcademyDrawerOpen"
+                  class="w-8 h-8 sm:w-9 sm:h-9 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 hover:text-indigo-600 flex items-center justify-center shrink-0 shadow-xs transition focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-600 cursor-pointer">
+                  <svg class="ic w-4 h-4"><use href="#i-menu"></use></svg>
+                </button>
+                <button type="button" @click="openAcademyDrawer"
+                  class="flex items-center gap-1 sm:gap-2 text-left min-w-0 flex-1 overflow-hidden text-slate-700 hover:text-indigo-600 transition group cursor-pointer focus:outline-none">
+                  <span class="text-xs sm:text-sm font-bold text-slate-900 group-hover:text-indigo-600 shrink-0">Module {{ currentAcademy.n }}:</span>
+                  <span class="text-xs sm:text-sm font-medium text-slate-600 group-hover:text-indigo-600 truncate block min-w-0">{{ currentAcademy.title }}</span>
+                  <svg class="ic w-3.5 h-3.5 text-slate-400 group-hover:text-indigo-500 shrink-0 hidden sm:inline"><use href="#i-chev-d"></use></svg>
+                </button>
+              </div>
+
+              <!-- Right: Quick progress badge + Next/Previous chevron navigation buttons -->
+              <div class="flex items-center gap-1 sm:gap-2 shrink-0">
+                <div class="flex items-center gap-1 sm:gap-1.5 px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-full bg-slate-100 border border-slate-200/70 text-[10px] sm:text-[11px] font-semibold text-slate-700 shrink-0">
+                  <svg class="ic w-3 h-3 text-emerald-600 shrink-0"><use href="#i-check"></use></svg>
+                  <span class="mono">{{ academyDoneCount }}/10</span>
+                  <span class="hidden md:inline text-slate-500 font-normal">Completed</span>
+                </div>
+                <div class="flex items-center gap-1 shrink-0">
+                  <button type="button" @click="gotoModule(db.am-1)" :disabled="db.am===1" aria-label="Previous module" title="Previous module"
+                    class="w-7 h-7 sm:w-8 sm:h-8 rounded-lg border border-slate-200 bg-white text-slate-600 hover:bg-slate-50 hover:text-slate-900 disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center shadow-xs transition cursor-pointer">
+                    <svg class="ic w-3.5 h-3.5 sm:w-4 sm:h-4"><use href="#i-chev-l"></use></svg>
+                  </button>
+                  <button type="button" @click="gotoModule(db.am+1)" :disabled="db.am===10 || !moduleUnlocked(db.am+1)" aria-label="Next module" title="Next module"
+                    class="w-7 h-7 sm:w-8 sm:h-8 rounded-lg border border-slate-200 bg-white text-slate-600 hover:bg-slate-50 hover:text-slate-900 disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center shadow-xs transition cursor-pointer">
+                    <svg class="ic w-3.5 h-3.5 sm:w-4 sm:h-4"><use href="#i-chev-r"></use></svg>
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- ============ ACADEMY CONTENT + UTILITY WORKBENCH (dual pane) ============ -->
+            <div class="min-w-0 p-4 sm:p-6 lg:p-8 grid xl:grid-cols-[minmax(0,68fr)_minmax(0,32fr)] gap-6 xl:gap-7 items-start">
           <article class="min-w-0">
             <!-- Module header -->
             <div class="mb-6 pb-5 border-b border-slate-200">
@@ -3359,18 +3747,19 @@
             </div>
 
             <!-- Module navigation footer -->
-            <div class="mt-8 pt-5 border-t border-slate-200 flex items-center justify-between gap-3 no-print">
-              <button @click="gotoModule(db.am-1)" :disabled="db.am===1" class="h-10 px-4 rounded-lg border border-slate-300 bg-white text-slate-600 text-sm font-semibold hover:bg-slate-50 disabled:opacity-40 flex items-center gap-1.5">
+            <div class="mt-8 pt-5 border-t border-slate-200 flex items-center justify-between gap-2 sm:gap-3 no-print">
+              <button @click="gotoModule(db.am-1)" :disabled="db.am===1" class="h-9 sm:h-10 px-3 sm:px-4 rounded-lg border border-slate-300 bg-white text-slate-600 text-xs sm:text-sm font-semibold hover:bg-slate-50 disabled:opacity-40 flex items-center gap-1.5">
                 <svg class="ic w-4 h-4"><use href="#i-chev-l"></use></svg> Previous
               </button>
-              <div class="flex items-center gap-1.5">
+              <span class="sm:hidden text-xs font-semibold mono text-slate-500">Module {{ db.am }} / 10</span>
+              <div class="hidden sm:flex items-center gap-1.5">
                 <button v-for="n in 10" :key="n" @click="gotoModule(n)" :class="db.am===n ? 'bg-violet-600 text-white border-violet-600' : (db.academyDone[n] ? 'bg-white border-emerald-300 text-emerald-600' : (moduleUnlocked(n) ? 'bg-white border-slate-200 text-slate-400 hover:border-slate-300' : 'bg-slate-50 border-slate-200 text-slate-300'))"
                   class="w-7 h-7 rounded-md border text-[11px] font-bold flex items-center justify-center">
                   <svg v-if="!moduleUnlocked(n) && !db.academyDone[n]" class="ic w-3 h-3"><use href="#i-lock"></use></svg>
                   <span v-else>{{ n }}</span>
                 </button>
               </div>
-              <button @click="gotoModule(db.am+1)" :disabled="db.am===10 || !moduleUnlocked(db.am+1)" class="h-10 px-4 rounded-lg border border-slate-300 bg-white text-slate-600 text-sm font-semibold hover:bg-slate-50 disabled:opacity-40 flex items-center gap-1.5">
+              <button @click="gotoModule(db.am+1)" :disabled="db.am===10 || !moduleUnlocked(db.am+1)" class="h-9 sm:h-10 px-3 sm:px-4 rounded-lg border border-slate-300 bg-white text-slate-600 text-xs sm:text-sm font-semibold hover:bg-slate-50 disabled:opacity-40 flex items-center gap-1.5">
                 Next <svg class="ic w-4 h-4"><use href="#i-chev-r"></use></svg>
               </button>
             </div>
@@ -3548,6 +3937,7 @@
               </div>
             </div>
           </aside>
+          </div>
           </div>
         </div>
       </template>
@@ -7070,6 +7460,12 @@ var App = {
       certForm: { name: '', track: 'Enterprise HRIS Architecture & Global Workforce Operations' },
       /* academy celebration (spec §10) */
       celebrateOpen: false, celebrateName: '', celebrateTrack: CERT_TRACKS[0],
+      /* sandbox drawer & navigation */
+      isSandboxDrawerOpen: false,
+      isSandboxSidebarCollapsed: false,
+      /* academy drawer & navigation */
+      isAcademyDrawerOpen: false,
+      isAcademySidebarCollapsed: false,
       /* academy utility workbench — live formula labs (spec §4) */
       lab: {
         evt: 'WORKER_HIRED', evtWorker: 'E-1021', evtEffective: '2026-10-01',
@@ -8144,8 +8540,17 @@ var App = {
       /* Leaving the Settings surface on an explicit engine switch (spec §10) */
       if (m !== this.db.mode && this.db.tab === 'settings') this.db.tab = 'overview';
       this.db.mode = m;
+      this.isAcademyDrawerOpen = false;
+      this.isSandboxDrawerOpen = false;
     },
-    setTab: function (t) { this.db.tab = t; this.searchOpen = false; if (t === 'audit') this.db.track.auditInspected = true; },
+    setTab: function (t) {
+      this.db.tab = t;
+      this.searchOpen = false;
+      if (t === 'audit') this.db.track.auditInspected = true;
+      if (typeof window !== 'undefined' && window.innerWidth < 1024) {
+        this.closeSandboxDrawer();
+      }
+    },
     /* ---------------- Module 00 Command Center launchers ---------------- */
     /* ---------------- manual one-by-one employee onboarding (spec §3) ---------------- */
     openOnboard: function () {
@@ -9198,6 +9603,56 @@ var App = {
       this.importPreview = null;
       this.toast('ok', created.length + ' worker record(s) written to the master register.');
     },
+    /* ---------------- sandbox drawer navigation ---------------- */
+    toggleSandboxDrawer: function () {
+      if (typeof window !== 'undefined' && window.innerWidth >= 1024) {
+        this.isSandboxSidebarCollapsed = !this.isSandboxSidebarCollapsed;
+        this.isSandboxDrawerOpen = !this.isSandboxSidebarCollapsed;
+      } else {
+        this.isSandboxDrawerOpen = !this.isSandboxDrawerOpen;
+      }
+    },
+    openSandboxDrawer: function () {
+      this.isSandboxDrawerOpen = true;
+      this.isSandboxSidebarCollapsed = false;
+    },
+    closeSandboxDrawer: function () {
+      this.isSandboxDrawerOpen = false;
+    },
+    prevSandboxTab: function () {
+      if (this.db.tab === 'settings') {
+        this.setTab('audit');
+        return;
+      }
+      var m = this.currentModule;
+      if (m && m.n > 0) {
+        this.setTab(MODULES[m.n - 1].id);
+      }
+    },
+    nextSandboxTab: function () {
+      var m = this.currentModule;
+      if (m && m.n < 10) {
+        this.setTab(MODULES[m.n + 1].id);
+      } else if (m && m.n === 10) {
+        this.setTab('settings');
+      }
+    },
+    /* ---------------- academy drawer navigation ---------------- */
+    toggleAcademyDrawer: function () {
+      if (typeof window !== 'undefined' && window.innerWidth >= 1024) {
+        this.isAcademySidebarCollapsed = !this.isAcademySidebarCollapsed;
+        this.isAcademyDrawerOpen = !this.isAcademySidebarCollapsed;
+      } else {
+        this.isAcademyDrawerOpen = !this.isAcademyDrawerOpen;
+      }
+    },
+    openAcademyDrawer: function () {
+      this.isAcademyDrawerOpen = true;
+      this.isAcademySidebarCollapsed = false;
+    },
+    closeAcademyDrawer: function () {
+      this.isAcademyDrawerOpen = false;
+    },
     /* ---------------- academy ---------------- */
     moduleUnlocked: function (n) {
       if (n <= 1) return true;
@@ -9211,6 +9666,9 @@ var App = {
         return;
       }
       this.db.am = n;
+      if (typeof window !== 'undefined' && window.innerWidth < 1024) {
+        this.closeAcademyDrawer();
+      }
     },
     submitExam: function (n) {
       var qs = QUIZZES[n - 1] || [], ex = this.db.academyExam[n];
@@ -9462,6 +9920,14 @@ var App = {
     document.documentElement.classList.toggle('dense', this.density === 'compact');
     this.verifyAssets();
     this.$nextTick(function () { self.renderCharts(); });
+    window.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape' && self.isAcademyDrawerOpen) {
+        self.closeAcademyDrawer();
+      }
+      if (e.key === 'Escape' && self.isSandboxDrawerOpen) {
+        self.closeSandboxDrawer();
+      }
+    });
   }
 };
 
@@ -9540,7 +10006,7 @@ var ExamCheck = {
   template:
     '<div class="mt-8 rounded-xl border-2 border-slate-900 overflow-hidden">' +
       /* ---- header ---- */
-      '<div class="bg-slate-900 px-4 py-3 flex items-center justify-between gap-3">' +
+      '<div class="bg-slate-900 px-3.5 sm:px-4 py-3 flex flex-wrap items-center justify-between gap-2.5 sm:gap-3">' +
         '<div class="flex items-center gap-2.5">' +
           '<span class="w-7 h-7 rounded-lg bg-violet-600 grid place-items-center shrink-0"><svg class="ic w-4 h-4 text-white"><use href="#i-shield-check"></use></svg></span>' +
           '<div class="min-w-0">' +
